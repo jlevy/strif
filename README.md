@@ -1,6 +1,6 @@
 # strif
 
-Strif is a tiny (<1000 loc) library of string- and file-related utilities for Python 2.
+Strif is a tiny (only a few hundred loc) library of string- and file-related utilities for Python 2.
 
 Why bother, if it's so short?
 Because it saves time, fills in gaps, avoids clumsy repetition, and has
@@ -80,6 +80,12 @@ pip install strif
 ```
 
 Or add as a dependency in your setup.py.
+
+## Further Information
+
+```bash
+pydoc strif
+```
 
 ## Contributing
 
