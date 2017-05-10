@@ -326,6 +326,10 @@ def rmtree_or_file(path, ignore_errors=False, onerror=None):
   """
   rmtree fails on files or symlinks. This removes the target, whatever it is.
   """
+  # TODO: Could add an rsync-based delete, as in
+  # https://github.com/vivlabs/instaclone/blob/master/instaclone/instaclone.py#L127-L143
+  if ignore_errors and not os.path.exists(path):
+    return
   if os.path.isdir(path) and not os.path.islink(path):
     shutil.rmtree(path, ignore_errors=ignore_errors, onerror=onerror)
   else:
