@@ -1,14 +1,20 @@
 # strif
 
-Strif is a tiny (only a few hundred loc) library of string- and file-related utilities for Python 2.
-
-Why bother, if it's so short?
-Because it saves time, fills in gaps, avoids clumsy repetition, and has
-no other dependencies.
+Strif is a tiny (only a few hundred loc) library of string- and file-related utilities
+for Python 2.7 and 3.6.
 
 The goal is to complement the standard libs, not replace or wrap them.
 It's basically an assembly of some functions and tricks that have repeatedly
 shown value in various projects.
+
+**Why bother, if it's so short?**
+Because it saves time, fills in gaps, avoids clumsy repetition, and has
+zero dependencies.
+
+**Is it mature?**
+I've used these tools individually in production situations,
+but it's not a comprehensively tested library.
+
 
 ## Highlights
 
@@ -65,13 +71,15 @@ no matter what.
 
 ### Miscellany
 
-- Secure random [base 36](https://en.wikipedia.org/wiki/Base36) identifiers.
+- **Secure random [base 36](https://en.wikipedia.org/wiki/Base36) identifiers:**
   Digression: Use base 36 in general for random id strings. It is briefer than
   hex, avoids ugly non-alphanumeric characters like base 64, and is case insensitive,
   which is generally wise (e.g. due to MacOS case-insensitive filesystems).
-- Secure random timestamped and base 36 identifiers. These are similar, but start with
-  an ISO timestamp, so that they sort chronologically but are still unique.
-- Abbreviate strings and lists in a pretty way, truncating items and adding ellipses.
+- **Secure random timestamped identifiers.** These are similar, but start with
+  an ISO timestamp plus a base 36 identifier, so that they sort chronologically but
+  are still unique.
+- **Abbreviations for strings and lists:** Abbreviate strings and lists in a pretty way,
+  truncating items and adding ellipses.
 
 ## Installation
 

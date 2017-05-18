@@ -1,12 +1,12 @@
 """
-Strif is a tiny (<1000 loc) library of string- and file-related utilities for Python 2.
+Strif is a tiny (<1000 loc) library of string- and file-related utilities for Python 2.7 and 3.
 
 More information: https://github.com/jlevy/strif
 """
 
 __author__ = 'jlevy'
 
-VERSION = "0.1.2"
+VERSION = "0.2.0"
 DESCRIPTION = "Tiny, useful lib for strings and files"
 LONG_DESCRIPTION = __doc__
 
@@ -27,7 +27,6 @@ try:
   import subprocess32 as subprocess
 except ImportError:
   import subprocess
-
 
 # A pre-opened handle to /dev/null.
 DEV_NULL = open(os.devnull, 'wb')
@@ -117,7 +116,8 @@ def expand_variables(template_str, value_map, transformer=None):
     if transformer is None:
       transformer = lambda v: v
     try:
-      transformed_value_map = {k: transformer(v) for (k, v) in value_map.iteritems()}
+      # Don't bother iterating items for Python 2+3 compatibility.
+      transformed_value_map = {k: transformer(value_map[k]) for k in value_map}
       return Template(template_str).substitute(transformed_value_map)
     except Exception as e:
       raise ValueError("could not expand variable names in command '%s': %s" % (template_str, e))
@@ -159,7 +159,7 @@ def move_to_backup(path, backup_suffix=BACKUP_SUFFIX):
     shutil.move(path, backup_path)
 
 
-def make_all_dirs(path, mode=0777):
+def make_all_dirs(path, mode=0o777):
   """
   Ensure local dir, with all its parent dirs, are created.
   Unlike os.makedirs(), will not fail if the path already exists.
@@ -284,7 +284,7 @@ def set_file_mtime(path, mtime, atime=None):
   """Set access and modification times on a file."""
   if not atime:
     atime = mtime
-  f = file(path, 'a')
+  f = open(path, 'a')
   try:
     os.utime(path, (atime, mtime))
   finally:
