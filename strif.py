@@ -6,13 +6,14 @@ More information: https://github.com/jlevy/strif
 
 __author__ = 'jlevy'
 
-VERSION = "0.2.0"
+VERSION = "0.2.1"
 DESCRIPTION = "Tiny, useful lib for strings and files"
 LONG_DESCRIPTION = __doc__
 
 from string import Template
 import re
 import os
+import errno
 import random
 import shutil
 import shlex
@@ -164,18 +165,26 @@ def make_all_dirs(path, mode=0o777):
   Ensure local dir, with all its parent dirs, are created.
   Unlike os.makedirs(), will not fail if the path already exists.
   """
-  if not os.path.isdir(path):
+  # Avoid races inherent to doing this in two steps (check then create).
+  # Python 3 has exist_ok but the approach below works for Python 2+3.
+  # https://stackoverflow.com/questions/600268/mkdir-p-functionality-in-python
+  try:
     os.makedirs(path, mode=mode)
+  except OSError as e:
+    if e.errno == errno.EEXIST and os.path.isdir(path):
+      pass
+    else:
+      raise
   return path
 
 
-def make_parent_dirs(path):
+def make_parent_dirs(path, mode=0o777):
   """
   Ensure parent directories of a file are created as needed.
   """
-  dir = os.path.dirname(path)
-  if dir and not os.path.isdir(dir):
-    os.makedirs(dir)
+  parent = os.path.dirname(path)
+  if parent:
+    make_all_dirs(parent, mode)
   return path
 
 
