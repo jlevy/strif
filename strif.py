@@ -4,12 +4,6 @@ Strif is a tiny (<1000 loc) library of string- and file-related utilities for Py
 More information: https://github.com/jlevy/strif
 """
 
-__author__ = 'jlevy'
-
-VERSION = "0.2.1"
-DESCRIPTION = "Tiny, useful lib for strings and files"
-LONG_DESCRIPTION = __doc__
-
 from string import Template
 import re
 import os
@@ -20,8 +14,15 @@ import shlex
 import pipes
 import tempfile
 import hashlib
+import codecs
 from contextlib import contextmanager
 from datetime import datetime
+
+__author__ = 'jlevy'
+
+VERSION = "0.2.2"
+DESCRIPTION = "Tiny, useful lib for strings and files"
+LONG_DESCRIPTION = __doc__
 
 # The subprocess module has known threading issues, so prefer subprocess32.
 try:
@@ -271,21 +272,21 @@ def _temp_output(is_dir, prefix="tmp", suffix="", dir=None, make_parents=False, 
     clean()
 
 
-def read_string_from_file(path):
+def read_string_from_file(path, encoding="utf8"):
   """
   Read entire contents of file into a string.
   """
-  with open(path, "rb") as f:
+  with codecs.open(path, "rb", encoding=encoding) as f:
     value = f.read()
   return value
 
 
-def write_string_to_file(path, string, make_parents=False, backup_suffix=BACKUP_SUFFIX):
+def write_string_to_file(path, string, make_parents=False, backup_suffix=BACKUP_SUFFIX, encoding="utf8"):
   """
   Write entire file with given string contents, atomically. Keeps backup by default.
   """
   with atomic_output_file(path, make_parents=make_parents, backup_suffix=backup_suffix) as tmp_path:
-    with open(tmp_path, "wb") as f:
+    with codecs.open(tmp_path, "wb", encoding=encoding) as f:
       f.write(string)
 
 
