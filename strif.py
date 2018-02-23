@@ -43,6 +43,9 @@ def dict_merge(*dict_list):
   """
   Given zero or more dicts, shallow copy and merge them into a new dict, with
   precedence to dictionary values later in the dict list.
+  Helpful mainly before Python 3.5.
+  https://stackoverflow.com/questions/38987/how-to-merge-two-dictionaries-in-a-single-expression
+  https://docs.python.org/dev/whatsnew/3.5.html#pep-448-additional-unpacking-generalizations
   """
   result = {}
   for d in dict_list:
