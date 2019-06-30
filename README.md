@@ -41,7 +41,8 @@ boilerplate coding.
 Similarly, you have syntax sugar for creating files or directories atomically using `with`:
 
 ```python
-with atomic_output_file("some-dir/my-final-output.txt", make_parents=True) as temp_target:
+with atomic_output_file("some-dir/my-final-output.txt",
+                        make_parents=True, backup_suffix=".old.{timestamp}") as temp_target:
   with open(temp_target, "w") as f:
     f.write("some contents")
 ```
@@ -49,6 +50,9 @@ with atomic_output_file("some-dir/my-final-output.txt", make_parents=True) as te
 Now if there is some issue during write, the output will instead be at a
 temporary location in the same directory (called `some-dir/my-final-output.txt.partial.XXXXX`).
 This ensures integrity of the file appearing in the final location.
+
+Optionally, as a bonus, if you would have clobbered a previous output,
+it keeps a backup with a (fixed or uniquely timestamped) suffix.
 
 ### Syntax sugar for temporary files
 

@@ -158,7 +158,12 @@ def move_to_backup(path, backup_suffix=BACKUP_SUFFIX):
   If backup_suffix not supplied, move it to the extension ".bak".
   In backup_suffix, the string "{timestamp}", if present, will be replaced
   by a new_timestamped_uid(), allowing infinite numbers of timestamped backups.
-  NB: If backup_suffix is supplied and is None, don't do anything.
+  If backup_suffix is supplied and is None, don't do anything.
+
+  Important:
+  Without "{timestamp}", backup files and directories may be clobbered!
+  This operation is atomic in that an incomplete file will never be visble.
+  However, it's not atomic in that a file may be missing _very_ briefly.
   """
   if backup_suffix and os.path.exists(path):
     backup_path = path + _expand_backup_suffix(backup_suffix)
