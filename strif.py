@@ -20,7 +20,7 @@ from datetime import datetime
 
 __author__ = 'jlevy'
 
-VERSION = "0.2.2"
+VERSION = "0.2.3"
 DESCRIPTION = "Tiny, useful lib for strings and files"
 LONG_DESCRIPTION = __doc__
 
@@ -34,6 +34,7 @@ except ImportError:
 DEV_NULL = open(os.devnull, 'wb')
 
 BACKUP_SUFFIX = ".bak"
+TIMESTAMP_VAR = "{timestamp}"
 
 _RANDOM = random.SystemRandom()
 _RANDOM.seed()
@@ -146,14 +147,21 @@ def shell_expand_to_popen(template, values):
 #
 # ---- File operations ----
 
+def _expand_backup_suffix(backup_suffix):
+  return backup_suffix.replace(TIMESTAMP_VAR,
+                               new_timestamped_uid()) if TIMESTAMP_VAR in backup_suffix else backup_suffix
+
+
 def move_to_backup(path, backup_suffix=BACKUP_SUFFIX):
   """
   Move the given file or directory to the same name, with a backup suffix.
   If backup_suffix not supplied, move it to the extension ".bak".
+  In backup_suffix, the string "{timestamp}", if present, will be replaced
+  by a new_timestamped_uid(), allowing infinite numbers of timestamped backups.
   NB: If backup_suffix is supplied and is None, don't do anything.
   """
   if backup_suffix and os.path.exists(path):
-    backup_path = path + backup_suffix
+    backup_path = path + _expand_backup_suffix(backup_suffix)
     # Some messy corner cases need to be handled for existing backups.
     # TODO: Note if this is a directory, and we do this twice at once, there is a potential race
     # that could leave one backup inside the other.
