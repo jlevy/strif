@@ -2,6 +2,23 @@
 Strif is a tiny (<1000 loc) library of string- and file-related utilities for Python 2.7 and 3.
 
 More information: https://github.com/jlevy/strif
+
+Notes on atomic file operations and backups, offered by several functions:
+
+All atomic operations with "atomic" in the sense that they do a single move of a
+complete file or directory into its final location. An incomplete file or directory
+will never appear in its final location, and multiple simultaneous operations
+will never yield corrupt output in the final location.
+
+With backup_suffix, the target file or directory will be moved to an alternate location
+before any file or directory is put in its place. You can keep just one backup, or
+infinitely many by putting the special string '{timestamp}' into the backup_suffix
+parameter.
+
+Note however that with directories, or with backup_suffix, both the old and the new
+file or directory may be absent _very_ briefly since the old copy needs to be moved
+before the new one is moved into place. With files and no_backup suffix, the target
+is clobbered on the filesystem directly so will always exist.
 """
 
 from string import Template
@@ -161,9 +178,8 @@ def move_to_backup(path, backup_suffix=BACKUP_SUFFIX):
   If backup_suffix is supplied and is None, don't do anything.
 
   Important:
-  Without "{timestamp}", backup files and directories may be clobbered!
-  This operation is atomic in that an incomplete file will never be visble.
-  However, it's not atomic in that a file may be missing _very_ briefly.
+  Without "{timestamp}", earlier backup files and directories, if they exist,
+  will be clobbered!
   """
   if backup_suffix and os.path.exists(path):
     backup_path = path + _expand_backup_suffix(backup_suffix)
