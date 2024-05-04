@@ -97,7 +97,7 @@ def new_timestamped_uid(bits=32):
   randomness. The advantage of this is it sorts nicely by time, while still being unique.
   Example: 20150912T084555Z-378465-43vtwbx
   """
-  return "%s-%s" % (re.sub('[^\w.]', '', datetime.now().isoformat()).replace(".", "Z-"), new_uid(bits))
+  return "%s-%s" % (re.sub(r'[^\w.]', '', datetime.now().isoformat()).replace(".", "Z-"), new_uid(bits))
 
 
 def abbreviate_str(string, max_len=80, indicator="..."):
