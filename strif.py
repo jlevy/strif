@@ -1,24 +1,7 @@
 """
-Strif is a tiny (<1000 loc) library of string- and file-related utilities for Python 3.6+.
+Strif is a tiny (<1000 loc) library of string and file utilities for Python 3.6+.
 
 More information: https://github.com/jlevy/strif
-
-Notes on atomic file operations and backups, offered by several functions:
-
-All atomic operations with "atomic" in the sense that they do a single move of a
-complete file or directory into its final location. An incomplete file or directory
-will never appear in its final location, and multiple simultaneous operations
-will never yield corrupt output in the final location.
-
-With backup_suffix, the target file or directory will be moved to an alternate location
-before any file or directory is put in its place. You can keep just one backup, or
-infinitely many by putting the special string '{timestamp}' into the backup_suffix
-parameter.
-
-Note however that with directories, or with backup_suffix, both the old and the new
-file or directory may be absent _very_ briefly since the old copy needs to be moved
-before the new one is moved into place. With files and no_backup suffix, the target
-is clobbered on the filesystem directly so will always exist.
 """
 
 from string import Template
@@ -37,7 +20,7 @@ from datetime import datetime
 
 __author__ = "jlevy"
 
-VERSION = "0.2.3"
+VERSION = "1.0.0-rc.1"
 DESCRIPTION = "Tiny, useful lib for strings and files"
 LONG_DESCRIPTION = __doc__
 
@@ -57,22 +40,8 @@ _RANDOM = random.SystemRandom()
 _RANDOM.seed()
 
 
-def dict_merge(*dict_list):
-    """
-    Given zero or more dicts, shallow copy and merge them into a new dict, with
-    precedence to dictionary values later in the dict list.
-    Helpful mainly before Python 3.5.
-    https://stackoverflow.com/questions/38987/how-to-merge-two-dictionaries-in-a-single-expression
-    https://docs.python.org/dev/whatsnew/3.5.html#pep-448-additional-unpacking-generalizations
-    """
-    result = {}
-    for d in dict_list:
-        result.update(d)
-    return result
-
-
 #
-# ---- Identifiers and abbreviations ----
+# ---- Identifiers and base36 encodings ----
 
 
 def new_uid(bits=64):
@@ -103,6 +72,65 @@ def new_timestamped_uid(bits=32):
         re.sub(r"[^\w.]", "", datetime.now().isoformat()).replace(".", "Z-"),
         new_uid(bits),
     )
+
+
+_NON_ALPHANUM_CHARS = re.compile("[^a-z0-9]+", re.IGNORECASE)
+
+
+def clean_alphanum(string, max_length=None):
+    """
+    Convert a string to a clean, readable identifier that includes the (first) alphanumeric
+    characters of the given string.
+
+    This mapping is for readability only, and so can easily have collisions on different inputs.
+    """
+    return _NON_ALPHANUM_CHARS.sub("_", string)[:max_length]
+
+
+def clean_alphanum_hash(string, max_length=64, max_hash_len=None):
+    """
+    Convert a string to a clean, readable identifier that includes the (first) alphanumeric
+    characters of the given string.
+
+    This includes a SHA1 hash so collisions are unlikely.
+    """
+
+    hash = hash_string_base36(string, algorithm="sha1")
+    if max_hash_len:
+        hash = hash[:max_hash_len]
+    if max_length < len(hash) + 1:
+        return hash
+    else:
+        return clean_alphanum(string, max_length=max_length - len(hash)) + "_" + hash
+
+
+def base36_encode(n):
+    """
+    Base 36 encode an integer.
+    """
+
+    chars = "0123456789abcdefghijklmnopqrstuvwxyz"
+    encoded = ""
+
+    while n > 0:
+        n, remainder = divmod(n, 36)
+        encoded = chars[remainder] + encoded
+
+    return encoded
+
+
+def hash_string_base36(string, algorithm="sha1"):
+    """
+    Hash string and return in base 36, which is good for short, friendly identifiers.
+    """
+
+    h = hashlib.new(algorithm)
+    h.update(string.encode("utf8"))
+    return base36_encode(int.from_bytes(h.digest(), byteorder="big"))
+
+
+#
+# ---- Abbreviations ----
 
 
 def abbreviate_str(string, max_len=80, indicator="..."):
@@ -442,3 +470,21 @@ def file_sha1(path):
                 break
             sha1.update(block)
         return sha1.hexdigest()
+
+
+#
+# --- Misc ---
+
+
+def dict_merge(*dict_list):
+    """
+    Given zero or more dicts, shallow copy and merge them into a new dict, with
+    precedence to dictionary values later in the dict list.
+    Helpful mainly before Python 3.5.
+    https://stackoverflow.com/questions/38987/how-to-merge-two-dictionaries-in-a-single-expression
+    https://docs.python.org/dev/whatsnew/3.5.html#pep-448-additional-unpacking-generalizations
+    """
+    result = {}
+    for d in dict_list:
+        result.update(d)
+    return result
