@@ -1,5 +1,5 @@
 """
-Strif is a tiny (<1000 loc) library of string- and file-related utilities for Python 2.7 and 3.
+Strif is a tiny (<1000 loc) library of string- and file-related utilities for Python 3.6+.
 
 More information: https://github.com/jlevy/strif
 
@@ -41,9 +41,9 @@ VERSION = "0.2.3"
 DESCRIPTION = "Tiny, useful lib for strings and files"
 LONG_DESCRIPTION = __doc__
 
-# The subprocess module has known threading issues, so prefer subprocess32.
+# The subprocess module has known threading issues, so prefer subprocess32, but as a soft dependency.
 try:
-    import subprocess32 as subprocess
+    import subprocess32 as subprocess  # type: ignore
 except ImportError:
     import subprocess
 
@@ -398,7 +398,7 @@ def movefile(source_path, dest_path, make_parents=False, backup_suffix=None):
     """
     if make_parents:
         make_parent_dirs(dest_path)
-    move_to_backup(dest_path, backup_suffix=backup_suffix)
+    move_to_backup(dest_path, backup_suffix=backup_suffix)  # type: ignore
     shutil.move(source_path, dest_path)
 
 

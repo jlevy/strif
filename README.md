@@ -1,7 +1,7 @@
 # strif
 
 Strif is a tiny (only a few hundred loc) library of string- and file-related utilities for
-Python 2.7 and 3.6.
+Python 3.6+.
 
 The goal is to complement the standard libs, not replace or wrap them.
 It’s basically an assembly of some functions and tricks that have repeatedly shown value
