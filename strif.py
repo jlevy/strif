@@ -11,7 +11,6 @@ import errno
 import random
 import shutil
 import shlex
-import pipes
 import tempfile
 import hashlib
 import codecs
@@ -174,7 +173,7 @@ def expand_variables(template_str, value_map, transformer=None):
         return None
     else:
         if transformer is None:
-            transformer = lambda v: v
+            transformer = lambda v: v  # noqa: E731
         try:
             # Don't bother iterating items for Python 2+3 compatibility.
             transformed_value_map = {k: transformer(value_map[k]) for k in value_map}
@@ -190,7 +189,7 @@ def shell_expand_variables(template_str, value_map):
     Expand a shell template string like "cp $SOURCE $TARGET/blah", also quoting values as needed
     to ensure shell safety.
     """
-    return expand_variables(template_str, value_map, transformer=pipes.quote)
+    return expand_variables(template_str, value_map, transformer=shlex.quote)
 
 
 def shell_expand_to_popen(template, values):
