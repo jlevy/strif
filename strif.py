@@ -133,9 +133,10 @@ def hash_string_base36(string, algorithm="sha1"):
 # ---- Abbreviations ----
 
 
-def abbreviate_str(string, max_len=80, indicator="..."):
+def abbreviate_str(string, max_len=80, indicator="…"):
     """
-    Abbreviate a string, adding an indicator like an ellipsis if required.
+    Abbreviate a string, adding an indicator like an ellipsis if required. Set max_len to
+    None or 0 not to truncate items.
     """
     if not string or not max_len or len(string) <= max_len:
         return string
@@ -145,7 +146,7 @@ def abbreviate_str(string, max_len=80, indicator="..."):
         return string[0 : max_len - len(indicator)] + indicator
 
 
-def abbreviate_list(items, max_items=10, item_max_len=40, joiner=", ", indicator="..."):
+def abbreviate_list(items, max_items=10, item_max_len=40, joiner=", ", indicator="…"):
     """
     Abbreviate a list, truncating each element and adding an indicator at the end if the
     whole list was truncated. Set item_max_len to None or 0 not to truncate items.
