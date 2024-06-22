@@ -19,7 +19,7 @@ from datetime import datetime
 
 __author__ = "jlevy"
 
-VERSION = "1.0.0-rc.1"
+VERSION = "1.0.0-rc.2"
 DESCRIPTION = "Tiny, useful lib for strings and files"
 LONG_DESCRIPTION = __doc__
 
