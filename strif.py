@@ -15,11 +15,11 @@ import tempfile
 import hashlib
 import codecs
 from contextlib import contextmanager
-from datetime import datetime
+from datetime import datetime, timezone
 
 __author__ = "jlevy"
 
-VERSION = "1.0.0"
+VERSION = "1.0.1"
 DESCRIPTION = "Tiny, useful lib for strings and files"
 LONG_DESCRIPTION = __doc__
 
@@ -53,12 +53,15 @@ def new_uid(bits=64):
     )  # log(26 + 10)/log(2) = 5.16
 
 
-def iso_timestamp():
+def iso_timestamp(microseconds: bool = True) -> str:
     """
-    ISO timestamp. With the Z for usual clarity.
-    Example: 2015-09-12T08:41:12.397217Z
+    ISO 8601 timestamp. Includes the Z for clarity that it is UTC.
+
+    Example with microseconds: 2015-09-12T08:41:12.397217Z
+    Example without microseconds: 2015-09-12T08:41:12Z
     """
-    return datetime.now().isoformat() + "Z"
+    timespec = "microseconds" if microseconds else "seconds"
+    return datetime.now(timezone.utc).isoformat(timespec=timespec).replace("+00:00", "Z")
 
 
 def new_timestamped_uid(bits=32):
