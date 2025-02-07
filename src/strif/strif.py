@@ -395,9 +395,22 @@ def atomic_output_file(
     tmp_suffix: str = ".partial",
 ) -> Generator[Path, None, None]:
     """
-    A context manager for convenience in writing a file or directory in an atomic way. Set up
-    a temporary name, then rename it after the operation is done, optionally making a backup of
-    the previous file or directory, if present.
+    A context manager for convenience in writing a file or directory in an atomic way.
+    Set up a temporary name, then rename it after the operation is done, optionally making
+    a backup of the previous file or directory, if present.
+
+    An incomplete file will never appear in its final location, and multiple simultaneous
+    operations will never yield corrupt output in the final location.
+
+    With `backup_suffix`, the target file or directory will be moved to an alternate
+    location before any file is put in its place. You can keep just one backup, or
+    infinitely many by putting the special string '{timestamp}' into the `backup_suffix`
+    parameter.
+
+    Note that with `backup_suffix`, the output file may be absent *very* briefly
+    since the old copy needs to be moved before the new one is moved into place.
+    Without `backup_suffix`, the target is clobbered on the filesystem directly so
+    will always exist.
     """
     dest_path = Path(dest_path)
     if dest_path == Path(os.devnull):
