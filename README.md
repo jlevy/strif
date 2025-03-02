@@ -188,6 +188,11 @@ pip install strif
 poetry add strif
 ```
 
-## Contributing
+## Development
 
-Please file issues or PRs!
+For development workflows, see [development.md](development.md).
+
+* * *
+
+*This project was built from
+[simple-modern-poetry](https://github.com/jlevy/simple-modern-poetry).*

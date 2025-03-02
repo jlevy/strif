@@ -1,19 +1,40 @@
-[tool.poetry]
+[project]
 name = "strif"
-# Keep this a dev version, as the dynamic versioning plugin is used for actual release versions:
-version = "0.0.0.dev"
-description = "Tiny, useful Python lib for strings and files."
-authors = ["Joshua Levy <joshua@cal.berkeley.edu>"]
+description = "Tiny, useful Python lib for strings and files"
+authors = [
+    { name="Joshua Levy", email="joshua@cal.berkeley.edu" },
+]
 readme = "README.md"
 license = "MIT"
-repository = "https://github.com/jlevy/strif"
-requires-poetry = ">=2.0"
+requires-python = ">=3.10,<4.0"
+dynamic = [ "dependencies", "version" ]
 
+[tool.poetry]
+requires-poetry = ">=2.0"
+packages = [
+    { include = "strif", from = "src" },
+]
+# Keep this a dev version, as the dynamic versioning plugin is used for actual release versions:
+
+# See: https://github.com/mtkennerly/poetry-dynamic-versioning
+version = "0.0.0.dev"
+[build-system]
+requires = ["poetry-core>=1.0.0", "poetry-dynamic-versioning>=1.7.0,<2.0.0"]
+build-backend = "poetry_dynamic_versioning.backend"
+
+[project.scripts]
+# Add script entry points here.
+# strif = "strif:main"
+
+# See:
+# https://github.com/python-poetry/poetry-plugin-shell
+# https://github.com/MousaZeidBaker/poetry-plugin-up
 [tool.poetry.requires-plugins]
-poetry-dynamic-versioning = "^1.7.0"
+poetry-plugin-shell = "^1.0.1"
+poetry-plugin-up = "^0.9.0"
 
 [tool.poetry.dependencies]
-python = "^3.10"
+python = ">=3.10,<4.0"
 
 [tool.poetry.group.dev.dependencies]
 black = "^24.10.0"
@@ -23,10 +44,6 @@ usort = "^1.0.8.post1"
 mypy = "^1.15.0"
 codespell = "^2.4.1"
 rich = "^13.9.4"
-
-[build-system]
-requires = ["poetry-core"]
-build-backend = "poetry.core.masonry.api"
 
 # Auto-generated version for builds based on git tag or commit.
 #
@@ -43,16 +60,14 @@ build-backend = "poetry.core.masonry.api"
 enable = true
 vcs = "git"
 pattern = "^v?(?P<base>\\d+\\.\\d+\\.\\d+)(-?((?P<stage>[a-zA-Z]+)\\.?(?P<revision>\\d+)?))?"
-format-jinja = """
-    {%- if distance == 0 -%}
+format-jinja = """{%- if distance == 0 -%}
         {{- base -}}
         {%- if stage -%}
             {{ stage }}{{ revision | default("") }}
         {%- endif -%}
     {%- else -%}
         {{- base }}.dev{{ distance }}+{{commit}}
-    {%- endif -%}
-"""
+    {%- endif -%}"""
 
 [tool.black]
 line-length = 100
