@@ -16,7 +16,7 @@ from contextlib import contextmanager
 from dataclasses import dataclass
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import Any, Generator, List, Optional, Tuple
+from typing import Any, Callable, Generator, List, Optional, Tuple
 
 # A pre-opened handle to /dev/null.
 DEV_NULL = open(os.devnull, "wb")
@@ -211,7 +211,7 @@ def hash_file(file_path: str | Path, algorithm: str = "sha1") -> Hash:
 
 def abbrev_str(string: str, max_len: Optional[int] = 80, indicator: str = "…") -> str:
     """
-    Abbreviate a string, adding an indicator like an ellipsis if required. Set max_len to
+    Abbreviate a string, adding an indicator like an ellipsis if required. Set `max_len` to
     None or 0 not to truncate items.
     """
     if not string or not max_len or len(string) <= max_len:
@@ -231,7 +231,7 @@ def abbrev_list(
 ) -> str:
     """
     Abbreviate a list, truncating each element and adding an indicator at the end if the
-    whole list was truncated. Set item_max_len to None or 0 not to truncate items.
+    whole list was truncated. Set `item_max_len` to None or 0 not to truncate items.
     """
     if not items:
         return str(items)
@@ -256,36 +256,52 @@ def single_line(text: str) -> str:
     return re.sub(r"\s+", " ", text).strip()
 
 
-_QUOTABLE = re.compile(r"['\" \n\t\r]")
+# Same as shlex.quote().
+_is_quotable = re.compile(r"[^\w@%+=:,./-]").search
 
 
-def quote_if_needed(arg: Any) -> str:
+def quote_if_needed(
+    arg: Any, to_str: Callable[[Any], str] = str, quote: Callable[[Any], str] = repr
+) -> str:
     """
-    A friendly way to format a string for display, adding quotes if needed for
-    readability. Good for formatting filenames for display. Shows empty strings
-    or None clearly. Otherwise uses `str()` on non-string objects.
-    Quoting is done with `repr()`, so is compatible with Python:
+    A friendly way to format a Path or string for display, adding quotes only
+    if needed for clarity. Intended for brevity and readability, not as a
+    parsable format.
+
+    Quotes strings similarly to `shlex.quote()`, so is mostly compatible with
+    shell quoting rules. By default, uses `str()` on non-string objects and
+    `repr()` for quoting, so is compatible with Python.
     ```
     print(quote_if_needed("foo")) -> foo
+    print(quote_if_needed("item_3")) -> item_3
     print(quote_if_needed("foo bar")) -> 'foo bar'
+    print(quote_if_needed("!foo")) -> '!foo'
     print(quote_if_needed("")) -> ''
     print(quote_if_needed(None)) -> None
+    print(quote_if_needed(Path("file.txt"))) -> file.txt
+    print(quote_if_needed(Path("my file.txt"))) -> 'my file.txt'
     ```
-    For true shell compatibility, use `shlex.quote()` instead, but note
+
+    For true shell compatibility, use `shlex.quote()` instead. But note
     `shlex.quote()` can be confusingly ugly because of shell quoting rules:
     ```
-    print(quote_if_needed("it's a file.txt")) -> "it's a file.txt"
-    print(shlex.quote("it's a file.txt")) -> 'it'"'"'s a file.txt'
+    print(quote_if_needed("it's a string")) -> "it's a string"
+    print(shlex.quote("it's a string")) -> 'it'"'"'s a string'
     ```
+
+    Can pass in `to_str` and `quote` functions to customize this behavior.
     """
     if not arg:
-        return repr(arg)
-    elif not isinstance(arg, str):
-        return str(arg)
-    elif _QUOTABLE.search(arg):
-        return repr(arg)
+        return quote(arg)
+    if not isinstance(arg, str) and not isinstance(arg, Path):
+        return to_str(arg)
+
+    if isinstance(arg, Path):
+        arg = str(arg)  # Treat Paths like strings for display.
+    if _is_quotable(arg):
+        return quote(arg)
     else:
-        return str(arg)
+        return to_str(arg)
 
 
 #
@@ -393,6 +409,7 @@ def atomic_output_file(
     make_parents: bool = False,
     backup_suffix: Optional[str] = None,
     tmp_suffix: str = ".partial",
+    force: bool = False,
 ) -> Generator[Path, None, None]:
     """
     A context manager for convenience in writing a file or directory in an atomic way.
@@ -411,6 +428,9 @@ def atomic_output_file(
     since the old copy needs to be moved before the new one is moved into place.
     Without `backup_suffix`, the target is clobbered on the filesystem directly so
     will always exist.
+
+    Enable `force` to force the destructive corner case of overwriting an existing
+    file or directory with no backup.
     """
     dest_path = Path(dest_path)
     if dest_path == Path(os.devnull):
@@ -427,13 +447,16 @@ def atomic_output_file(
         # in case of abnormal exit.
         if not os.path.exists(tmp_path):
             raise IOError(
-                "failure in writing file '%s': target file '%s' missing" % (dest_path, tmp_path)
+                f"Failure in writing file: {quote_if_needed(dest_path)}: target file missing: {quote_if_needed(tmp_path)}"
             )
         if backup_suffix:
             move_to_backup(dest_path, backup_suffix=backup_suffix)
-        # If the target already exists, and is a directory, it has to be removed.
         if os.path.isdir(dest_path):
-            shutil.rmtree(dest_path)
+            if force:
+                # If the target already exists, and is a directory, it has to be removed.
+                shutil.rmtree(dest_path)
+            else:
+                raise FileExistsError(f"Destination is a directory: {quote_if_needed(dest_path)}")
         shutil.move(tmp_path, dest_path)
 
 
