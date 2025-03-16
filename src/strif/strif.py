@@ -12,11 +12,12 @@ import re
 import shutil
 import subprocess
 import tempfile
+from collections.abc import Callable, Generator
 from contextlib import contextmanager
 from dataclasses import dataclass
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
-from typing import Any, Callable, Generator, List, Optional, Tuple
+from typing import Any
 
 # A pre-opened handle to /dev/null.
 DEV_NULL = open(os.devnull, "wb")
@@ -40,7 +41,7 @@ def iso_timestamp(microseconds: bool = True) -> str:
     Example without microseconds: 2015-09-12T08:41:12Z
     """
     timespec = "microseconds" if microseconds else "seconds"
-    return datetime.now(timezone.utc).isoformat(timespec=timespec).replace("+00:00", "Z")
+    return datetime.now(UTC).isoformat(timespec=timespec).replace("+00:00", "Z")
 
 
 def format_iso_timestamp(datetime_obj: datetime, microseconds: bool = True) -> str:
@@ -51,7 +52,7 @@ def format_iso_timestamp(datetime_obj: datetime, microseconds: bool = True) -> s
     Example without microseconds: 2015-09-12T08:41:12Z
     """
     timespec = "microseconds" if microseconds else "seconds"
-    return datetime_obj.astimezone(timezone.utc).isoformat(timespec=timespec).replace("+00:00", "Z")
+    return datetime_obj.astimezone(UTC).isoformat(timespec=timespec).replace("+00:00", "Z")
 
 
 #
@@ -75,14 +76,14 @@ def new_timestamped_uid(bits: int = 32) -> str:
 
     Example: 20150912T084555Z-378465-43vtwbx
     """
-    timestamp = re.sub(r"[^\w.]", "", datetime.now(timezone.utc).isoformat()).replace(".", "Z-")
+    timestamp = re.sub(r"[^\w.]", "", datetime.now(UTC).isoformat()).replace(".", "Z-")
     return f"{timestamp}-{new_uid(bits)}"
 
 
 _NON_ALPHANUM_CHARS = re.compile(r"[^a-z0-9]+", re.IGNORECASE)
 
 
-def clean_alphanum(string: str, max_length: Optional[int] = None) -> str:
+def clean_alphanum(string: str, max_length: int | None = None) -> str:
     """
     Convert a string to a clean, readable identifier that includes the (first) alphanumeric
     characters of the given string, replacing non-alphanumeric characters with underscores.
@@ -92,9 +93,7 @@ def clean_alphanum(string: str, max_length: Optional[int] = None) -> str:
     return _NON_ALPHANUM_CHARS.sub("_", string)[:max_length]
 
 
-def clean_alphanum_hash(
-    string: str, max_length: int = 64, max_hash_len: Optional[int] = None
-) -> str:
+def clean_alphanum_hash(string: str, max_length: int = 64, max_hash_len: int | None = None) -> str:
     """
     Convert a string to a clean, readable identifier that includes the (first) alphanumeric
     characters of the given string. Result is a string of length at most max_length,
@@ -209,7 +208,7 @@ def hash_file(file_path: str | Path, algorithm: str = "sha1") -> Hash:
 # ---- Abbreviations and formatting ----
 
 
-def abbrev_str(string: str, max_len: Optional[int] = 80, indicator: str = "…") -> str:
+def abbrev_str(string: str, max_len: int | None = 80, indicator: str = "…") -> str:
     """
     Abbreviate a string, adding an indicator like an ellipsis if required. Set `max_len` to
     None or 0 not to truncate items.
@@ -223,9 +222,9 @@ def abbrev_str(string: str, max_len: Optional[int] = 80, indicator: str = "…")
 
 
 def abbrev_list(
-    items: List[Any],
+    items: list[Any],
     max_items: int = 10,
-    item_max_len: Optional[int] = 40,
+    item_max_len: int | None = 40,
     joiner: str = ", ",
     indicator: str = "…",
 ) -> str:
@@ -407,7 +406,7 @@ def make_parent_dirs(path: str | Path, mode: int = 0o777) -> Path:
 def atomic_output_file(
     dest_path: str | Path,
     make_parents: bool = False,
-    backup_suffix: Optional[str] = None,
+    backup_suffix: str | None = None,
     tmp_suffix: str = ".partial",
     force: bool = False,
 ) -> Generator[Path, None, None]:
@@ -446,7 +445,7 @@ def atomic_output_file(
         # Note this is not in a finally block, so that result won't be renamed to final location
         # in case of abnormal exit.
         if not os.path.exists(tmp_path):
-            raise IOError(
+            raise OSError(
                 f"Failure in writing file: {quote_if_needed(dest_path)}: target file missing: {quote_if_needed(tmp_path)}"
             )
         if backup_suffix:
@@ -464,10 +463,10 @@ def atomic_output_file(
 def temp_output_file(
     prefix: str = "tmp",
     suffix: str = "",
-    dir: Optional[str | Path] = None,
+    dir: str | Path | None = None,
     make_parents: bool = False,
     always_clean: bool = False,
-) -> Generator[Tuple[int, Path], None, None]:
+) -> Generator[tuple[int, Path], None, None]:
     """
     A context manager for convenience in creating a temporary file,
     which is deleted when exiting the context.
@@ -502,7 +501,7 @@ def temp_output_file(
 def temp_output_dir(
     prefix: str = "tmp",
     suffix: str = "",
-    dir: Optional[str | Path] = None,
+    dir: str | Path | None = None,
     make_parents: bool = False,
     always_clean: bool = False,
 ) -> Generator[Path, None, None]:
@@ -540,7 +539,7 @@ def copyfile_atomic(
     source_path: str | Path,
     dest_path: str | Path,
     make_parents: bool = False,
-    backup_suffix: Optional[str] = None,
+    backup_suffix: str | None = None,
 ):
     """
     Copy file on local filesystem in an atomic way, so partial copies never exist. Preserves timestamps.
@@ -559,7 +558,7 @@ def copytree_atomic(
     source_path: str | Path,
     dest_path: str | Path,
     make_parents: bool = False,
-    backup_suffix: Optional[str] = None,
+    backup_suffix: str | None = None,
     symlinks: bool = False,
 ):
     """
