@@ -26,13 +26,16 @@ wise (e.g. due to MacOS case-insensitive filesystems).
 
   Abbreviates a string and appends an indicator if the content exceeds the allowed
   length.
+
 - **`abbrev_list(items: List[Any], max_items: int = 10, item_max_len: Optional[int] =
   40, joiner: str = ', ', indicator: str = '…')`**
 
   Shortens each element of a list and appends an ellipsis if the list is truncated.
+
 - **`single_line(text: str)`**
 
   Converts multi-line text into a single line by replacing extra whitespace with spaces.
+
 - **`quote_if_needed(arg: Any)`**
 
   Returns a string with quotes if needed for proper display (for example, for filenames
@@ -44,22 +47,27 @@ wise (e.g. due to MacOS case-insensitive filesystems).
 
   Generates a random base36 alphanumeric string with at least the specified bits of
   randomness. Suitable for filenames (especially on case-insensitive filesystems).
+
 - **`new_timestamped_uid(bits: int = 32)`**
 
   Creates a unique ID starting with an ISO timestamp, then fractions of seconds and bits
   of randomness. *Example*: `20150912T084555Z-378465-43vtwbx`
+
 - **`iso_timestamp(microseconds: bool = True)`**
 
   Returns an ISO 8601 timestamp in UTC, e.g. `2015-09-12T08:41:12.397217Z` (with
   microseconds) or `2015-09-12T08:41:12Z` (without).
+
 - **`format_iso_timestamp(datetime_obj: datetime, microseconds: bool = True)`**
 
   Formats a given datetime object as an ISO 8601 timestamp, ensuring UTC formatting with
   a trailing Z.
+
 - **`clean_alphanum(string: str, max_length: Optional[int] = None)`**
 
   Converts a string to a clean identifier by keeping only the first alphanumeric
   characters and replacing others with underscores.
+
 - **`clean_alphanum_hash(string: str, max_length: int = 64, max_hash_len: Optional[int]
   = None)`**
 
@@ -73,6 +81,7 @@ wise (e.g. due to MacOS case-insensitive filesystems).
   Computes a fast hash using a file's name, size, and high-resolution modification time,
   without looking at file contents.
   A useful key for fast caching of file contents.
+
 - **`hash_string(string: str, algorithm: str = 'sha1') -> Hash`** and
   **`hash_file(file_path: str | Path, algorithm: str = 'sha1') -> Hash`**
 
@@ -88,18 +97,22 @@ wise (e.g. due to MacOS case-insensitive filesystems).
   A context manager for writing files or directories atomically.
   A temporary file is created and, upon successful completion, renamed to the target
   location.
+
 - **`copyfile_atomic(source_path: str | Path, dest_path: str | Path, make_parents: bool
   = False, backup_suffix: Optional[str] = None)`**
 
   Atomically copies a file while preserving its timestamps.
+
 - **`copytree_atomic(source_path: str | Path, dest_path: str | Path, make_parents: bool
   = False, backup_suffix: Optional[str] = None, symlinks: bool = False)`**
 
   Recursively copies a directory or file atomically.
+
 - **`move_to_backup(path: str | Path, backup_suffix: str = '{timestamp}.bak')`** and
   **`copy_to_backup(path: str | Path, backup_suffix: str = '{timestamp}.bak')`**
 
   Functions to move or copy an existing file or directory to a backup destination.
+
 - **`move_file(src_path: Path, dest_path: Path, keep_backup: bool = True, backup_suffix:
   str = '{timestamp}.bak')`**
 
@@ -195,4 +208,4 @@ For development workflows, see [development.md](development.md).
 * * *
 
 *This project was built from
-[simple-modern-poetry](https://github.com/jlevy/simple-modern-poetry).*
+[simple-modern-uv](https://github.com/jlevy/simple-modern-uv).*

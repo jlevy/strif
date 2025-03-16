@@ -1,3 +1,9 @@
+# ---- Project Info and Dependencies ----
+
+[project.urls]
+Repository = "https://github.com/jlevy/strif"
+# Homepage = "https://..."
+
 [project]
 name = "strif"
 description = "Tiny, useful Python lib for strings and files"
@@ -6,77 +12,66 @@ authors = [
 ]
 readme = "README.md"
 license = "MIT"
-requires-python = ">=3.10,<4.0"
-dynamic = [ "dependencies", "version" ]
 
-[tool.poetry]
-requires-poetry = ">=2.0"
-packages = [
-    { include = "strif", from = "src" },
+requires-python = ">=3.11,<4.0"
+dynamic = ["version"]
+
+dependencies = []
+
+[dependency-groups]
+dev = [
+    "pytest>=8.3.5",
+    "ruff>=0.11.0",
+    "mypy>=1.15.0",
+    "codespell>=2.4.1",
+    "rich>=13.9.4",
 ]
-# Keep this a dev version, as the dynamic versioning plugin is used for actual release versions:
-
-# See: https://github.com/mtkennerly/poetry-dynamic-versioning
-version = "0.0.0.dev"
-[build-system]
-requires = ["poetry-core>=1.0.0", "poetry-dynamic-versioning>=1.7.0,<2.0.0"]
-build-backend = "poetry_dynamic_versioning.backend"
 
 [project.scripts]
 # Add script entry points here.
 # strif = "strif:main"
 
-# See:
-# https://github.com/python-poetry/poetry-plugin-shell
-# https://github.com/MousaZeidBaker/poetry-plugin-up
-[tool.poetry.requires-plugins]
-poetry-plugin-shell = "^1.0.1"
-poetry-plugin-up = "^0.9.0"
+# ---- Build system ----
 
-[tool.poetry.dependencies]
-python = ">=3.10,<4.0"
+# Dynamic versioning from:
+# https://github.com/ninoseki/uv-dynamic-versioning/
 
-[tool.poetry.group.dev.dependencies]
-black = "^24.10.0"
-pytest = "^8.3.4"
-ruff = "^0.4.10"
-usort = "^1.0.8.post1"
-mypy = "^1.15.0"
-codespell = "^2.4.1"
-rich = "^13.9.4"
+[build-system]
+requires = ["hatchling", "uv-dynamic-versioning"]
+build-backend = "hatchling.build"
 
-# Auto-generated version for builds based on git tag or commit.
-#
-# Preferred styles of versioning (PEP 440 compliant):
-#   1.2.3               (stable release)
-#   1.2.3a4             (pre-release, no dash or dots)
-#   1.2.3rc1            (release candidate)
-#   1.2.3.dev4+abcdef12 (development build, .dev for dev releases and +commit hash)
-#
-# Tags with a "v" prefix (e.g., v1.2.3) or additional dots (e.g., v1.2.3.rc1) are recognized
-# but normalized to the preferred style for distribution.
-# See: https://sam.hooke.me/note/2023/08/poetry-automatically-generated-package-version-from-git-commit/
-[tool.poetry-dynamic-versioning]
-enable = true
+[tool.hatch.version]
+source = "uv-dynamic-versioning"
+# Note JSON schemas don't seem to be right for tool.hatch.version.source so
+# this may cause false warnings in IDEs.
+# https://github.com/ninoseki/uv-dynamic-versioning/issues/21
+
+[tool.uv-dynamic-versioning]
 vcs = "git"
-pattern = "^v?(?P<base>\\d+\\.\\d+\\.\\d+)(-?((?P<stage>[a-zA-Z]+)\\.?(?P<revision>\\d+)?))?"
-format-jinja = """{%- if distance == 0 -%}
-        {{- base -}}
-        {%- if stage -%}
-            {{ stage }}{{ revision | default("") }}
-        {%- endif -%}
-    {%- else -%}
-        {{- base }}.dev{{ distance }}+{{commit}}
-    {%- endif -%}"""
+style = "pep440"
+bump = "true"
 
-[tool.black]
-line-length = 100
+
+# ---- Settings ----
 
 [tool.ruff]
 line-length = 100
 
 [tool.ruff.lint]
-ignore = ["E402", "E731", "E712"]
+select = [
+    "E", # pycodestyle
+    "F", # Pyflakes
+    "UP", # pyupgrade   
+    "B", # flake8-bugbear
+    "I", # isort
+    # "SIM", # flake8-simplify
+]
+ignore = [
+    "E501", # https://docs.astral.sh/ruff/rules/line-too-long/
+    "E402", # https://docs.astral.sh/ruff/rules/module-import-not-at-top-of-file/
+    "E731", # https://docs.astral.sh/ruff/rules/lambda-assignment/
+]
+
 
 [tool.mypy]
 disable_error_code = [

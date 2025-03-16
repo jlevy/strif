@@ -1,5 +1,30 @@
 import subprocess
+
 from rich import print as rprint
+
+# Update as needed.
+SRC_PATHS = ["src", "tests", "devtools"]
+DOC_PATHS = ["README.md"]
+
+
+def main():
+    rprint()
+
+    errcount = 0
+    errcount += _run(["codespell", "--write-changes", *SRC_PATHS, *DOC_PATHS])
+    errcount += _run(["ruff", "check", "--fix", *SRC_PATHS])
+    errcount += _run(["ruff", "format", *SRC_PATHS])
+    errcount += _run(["mypy", *SRC_PATHS])
+
+    rprint()
+
+    if errcount != 0:
+        rprint(f"[bold red]✗ Lint failed with {errcount} errors.[/bold red]")
+    else:
+        rprint("[bold green]✔️ Lint passed![/bold green]")
+    rprint()
+
+    return errcount
 
 
 def _run(cmd: list[str]) -> int:
@@ -10,29 +35,6 @@ def _run(cmd: list[str]) -> int:
     except subprocess.CalledProcessError as e:
         rprint(f"[bold red]Error: {e}[/bold red]")
         errcount = 1
-    rprint()
-
-    return errcount
-
-
-def main():
-    rprint()
-
-    errcount = 0
-    paths = ["src", "tests"]
-    doc_paths = ["README.md"]
-    errcount += _run(["codespell", "--write-changes", *paths, *doc_paths])
-    errcount += _run(["usort", "format", *paths])
-    errcount += _run(["ruff", "check", "--fix", *paths])
-    errcount += _run(["black", *paths])
-    errcount += _run(["mypy", *paths])
-
-    rprint()
-
-    if errcount != 0:
-        rprint(f"[bold red]✗ Lint failed with {errcount} errors.[/bold red]")
-    else:
-        rprint("[bold green]✔️ Lint passed![/bold green]")
     rprint()
 
     return errcount
