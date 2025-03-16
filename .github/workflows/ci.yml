@@ -21,7 +21,7 @@ jobs:
         # Update this as needed:
         # Common platforms: ["ubuntu-latest", "macos-latest", "windows-latest"]
         os: ["ubuntu-latest"]
-        python-version: ["3.11", "3.12", "3.13"]
+        python-version: ["3.10", "3.11", "3.12", "3.13"]
 
     # Linux only by default. Use ${{ matrix.os }} for other OSes.
     runs-on: ${{ matrix.os }}

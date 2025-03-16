@@ -15,7 +15,7 @@ import tempfile
 from collections.abc import Callable, Generator
 from contextlib import contextmanager
 from dataclasses import dataclass
-from datetime import UTC, datetime
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
@@ -41,18 +41,18 @@ def iso_timestamp(microseconds: bool = True) -> str:
     Example without microseconds: 2015-09-12T08:41:12Z
     """
     timespec = "microseconds" if microseconds else "seconds"
-    return datetime.now(UTC).isoformat(timespec=timespec).replace("+00:00", "Z")
+    return datetime.now(timezone.utc).isoformat(timespec=timespec).replace("+00:00", "Z")
 
 
 def format_iso_timestamp(datetime_obj: datetime, microseconds: bool = True) -> str:
     """
-    Format a datetime as an ISO 8601 timestamp. Includes the Z for clarity that it is UTC.
+    Format a datetime as an ISO 8601 timestamp. Includes the Z for clarity that it is timezone.utc.
 
     Example with microseconds: 2015-09-12T08:41:12.397217Z
     Example without microseconds: 2015-09-12T08:41:12Z
     """
     timespec = "microseconds" if microseconds else "seconds"
-    return datetime_obj.astimezone(UTC).isoformat(timespec=timespec).replace("+00:00", "Z")
+    return datetime_obj.astimezone(timezone.utc).isoformat(timespec=timespec).replace("+00:00", "Z")
 
 
 #
@@ -76,7 +76,7 @@ def new_timestamped_uid(bits: int = 32) -> str:
 
     Example: 20150912T084555Z-378465-43vtwbx
     """
-    timestamp = re.sub(r"[^\w.]", "", datetime.now(UTC).isoformat()).replace(".", "Z-")
+    timestamp = re.sub(r"[^\w.]", "", datetime.now(timezone.utc).isoformat()).replace(".", "Z-")
     return f"{timestamp}-{new_uid(bits)}"
 
 
