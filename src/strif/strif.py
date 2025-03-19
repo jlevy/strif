@@ -255,12 +255,19 @@ def single_line(text: str) -> str:
     return re.sub(r"\s+", " ", text).strip()
 
 
-# Same as shlex.quote().
-_is_quotable = re.compile(r"[^\w@%+=:,./-]").search
+def is_quotable(s: str) -> bool:
+    """
+    Does this string need to be quoted? Same as the logic used by `shlex.quote()`
+    but with the addition of ~ since this character isn't generally needed to be quoted.
+    """
+    return bool(re.compile(r"[^\w@%+=:,./~-]").search(s))
 
 
 def quote_if_needed(
-    arg: Any, to_str: Callable[[Any], str] = str, quote: Callable[[Any], str] = repr
+    arg: Any,
+    to_str: Callable[[Any], str] = str,
+    quote: Callable[[Any], str] = repr,
+    is_quotable: Callable[[str], bool] = is_quotable,
 ) -> str:
     """
     A friendly way to format a Path or string for display, adding quotes only
@@ -279,6 +286,7 @@ def quote_if_needed(
     print(quote_if_needed(None)) -> None
     print(quote_if_needed(Path("file.txt"))) -> file.txt
     print(quote_if_needed(Path("my file.txt"))) -> 'my file.txt'
+    print(quote_if_needed("~/my/path/file.txt")) -> '~/my/path/file.txt'
     ```
 
     For true shell compatibility, use `shlex.quote()` instead. But note
@@ -297,7 +305,7 @@ def quote_if_needed(
 
     if isinstance(arg, Path):
         arg = str(arg)  # Treat Paths like strings for display.
-    if _is_quotable(arg):
+    if is_quotable(arg):
         return quote(arg)
     else:
         return to_str(arg)

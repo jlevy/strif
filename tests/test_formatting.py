@@ -13,6 +13,7 @@ def test_quote_if_needed():
     assert quote_if_needed(Path("file.txt")) == "file.txt"
     assert quote_if_needed(Path("my file.txt")) == "'my file.txt'"
     assert quote_if_needed("it's a string") == '"it\'s a string"'
+    assert quote_if_needed("~/my/path/file.txt") == "~/my/path/file.txt"
 
 
 def test_abbrev_str():
