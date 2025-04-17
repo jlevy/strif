@@ -5,14 +5,24 @@ Strif is a tiny (~1000 loc) library of string and file utilities for modern Pyth
 It’s an assembly of some functions and tricks that have repeatedly shown value in
 various projects. The goal is to complement the standard libs, not replace or wrap them.
 
-✨ **NEW:** **Version 2.0** is now updated for Python 3.10-3.13! ✨
+✨ **NEW:** **Version 3.0** now has a few additions and is updated for Python 3.10-3.13!
+✨
 
-## Overview
+A quick overview is here in the readme.
+The libs are all small so see pydoc strings and code for full docs.
 
-Use `pydoc strif` for full docs!
-A quick overview is below.
+## Installation
 
-### Base36 Identifiers
+```sh
+# Use uv
+uv add strif
+# Or poetry
+poetry add strif
+# Or pip
+pip install strif
+```
+
+## Base36 Identifiers
 
 Several functions offer [base 36](https://en.wikipedia.org/wiki/Base36) identifiers.
 
@@ -20,7 +30,7 @@ It’s frequently preferable to use base 36. Base 36 is briefer than hex, avoids
 non-alphanumeric characters like base 64, and is case insensitive, which is generally
 wise (e.g. due to MacOS case-insensitive filesystems).
 
-### Text Abbreviations and Formatting
+## Text Abbreviations and Formatting
 
 - **`abbrev_str(string: str, max_len: Optional[int] = 80, indicator: str = '…')`**
 
@@ -41,7 +51,7 @@ wise (e.g. due to MacOS case-insensitive filesystems).
   Returns a string with quotes if needed for proper display (for example, for filenames
   with spaces).
 
-### String Identifiers, Timestamps, and Hashing
+## String Identifiers, Timestamps, and Hashing
 
 - **`new_uid(bits: int = 64)`**
 
@@ -74,7 +84,7 @@ wise (e.g. due to MacOS case-insensitive filesystems).
   Combines the cleaned version of a string with a base36 SHA1 hash to minimize
   collisions.
 
-### File Hashing
+## File Hashing
 
 - **`file_mtime_hash(path: str | Path)`**
 
@@ -89,7 +99,7 @@ wise (e.g. due to MacOS case-insensitive filesystems).
   The returned `Hash` object has properties to output the digest in hexadecimal, base36,
   or with a prefixed algorithm name.
 
-### Atomic File Operations with Optional Backups
+## Atomic File Operations with Optional Backups
 
 - **`atomic_output_file(dest_path: str | Path, make_parents: bool = False,
   backup_suffix: Optional[str] = None, tmp_suffix: str = '.partial')`**
@@ -161,7 +171,7 @@ This creates parent folders as needed (a major convenience).
 And if you would have clobbered a previous output, it keeps a backup with a (fixed or
 uniquely timestamped) suffix.
 
-### Syntax Sugar for Temporary Files
+## Syntax Sugar for Temporary Files
 
 Syntax sugar for auto-deleting temporary files or directories using `with`:
 
@@ -180,7 +190,7 @@ Note these don’t delete files in case of error, which is usually what you want
 Add `always_clean=True` if you want the temporary file or directory to be removed no
 matter what.
 
-### Multiple String Replacements
+## Multiple String Replacements
 
 - **`insert_multiple(text: str, insertions: list[Insertion]) -> str`**
 
@@ -191,7 +201,7 @@ matter what.
   Replace multiple substrings in `text` with new strings, simultaneously.
   The replacements are a list of tuples (start_offset, end_offset, new_string).
 
-### Simple String Template
+## Simple String Template
 
 A validated template string that supports only specified fields.
 Can subclass to have a type with a given set of `allowed_fields`. Provide a type with a
@@ -209,7 +219,7 @@ Examples:
 ' 10@19.99'
 ```
 
-### Atomic Vars
+## Atomic Vars
 
 `AtomicVar` is a simple zero-dependency thread-safe variable that works for any type.
 
@@ -276,18 +286,9 @@ zero) dependencies.
 I’ve used many of these functions in production situations for years.
 But it doesn't have comprehensive tests at the moment.
 
-## Installation
-
-```sh
-# Use uv
-uv add strif
-# Or poetry
-poetry add strif
-# Or pip
-pip install strif
-```
-
 * * *
+
+## Development
 
 For how to install uv and Python, see [installation.md](installation.md).
 
