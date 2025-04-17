@@ -1,6 +1,6 @@
 # strif
 
-Strif is a tiny (<1000 loc) library of string and file utilities for modern Python.
+Strif is a tiny (~1000 loc) library of string and file utilities for modern Python.
 
 It’s an assembly of some functions and tricks that have repeatedly shown value in
 various projects. The goal is to complement the standard libs, not replace or wrap them.
@@ -201,9 +201,13 @@ pip install strif
 poetry add strif
 ```
 
-## Development
+* * *
+
+For how to install uv and Python, see [installation.md](installation.md).
 
 For development workflows, see [development.md](development.md).
+
+For instructions on publishing to PyPI, see [publishing.md](publishing.md).
 
 * * *
 

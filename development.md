@@ -4,10 +4,10 @@
 
 This project is set up to use [uv](https://docs.astral.sh/uv/) to manage Python and
 dependencies. First, be sure you
-[have uv installed](https://docs.astral.sh/uv/getting-started/installation/)..
+[have uv installed](https://docs.astral.sh/uv/getting-started/installation/).
 
-Then [fork](https://github.com/jlevy/strif/fork) this repo (having your own fork will
-make it easier to contribute) and
+Then [fork the jlevy/strif repo](https://github.com/jlevy/strif/fork) (having your own
+fork will make it easier to contribute) and
 [clone it](https://docs.github.com/en/repositories/creating-and-managing-repositories/cloning-a-repository).
 
 ## Basic Developer Workflows
@@ -66,21 +66,22 @@ source .venv/bin/activate
 
 See [uv docs](https://docs.astral.sh/uv/) for details.
 
-## Release Process
+## IDE setup
 
-This project is set up to publish to [PyPI](https://pypi.org/) from GitHub Actions.
+If you use VSCode or a fork like Cursor or Windsurf, you can install the following
+extensions:
 
-Thanks to [the dynamic versioning
-plugin](https://github.com/ninoseki/uv-dynamic-versioning/) and the
-[`publish.yml` workflow](.github/workflows/publish.yml), you can simply create tagged
-releases (using standard format for the tag name, e.g. `v0.1.0`) on GitHub and the tag
-will trigger a release build, which then uploads it to PyPI.
+- [Python](https://marketplace.visualstudio.com/items?itemName=ms-python.python)
 
-For this to work you will need to have a PyPI account and authorize your repository to
-publish to PyPI. The simplest way to do that is on [the publishing settings
-page](https://pypi.org/manage/account/publishing/). Configure "Trusted Publisher
-Management" and register your GitHub repo as a new "pending" trusted publisher, entering
-the project name, repo owner, repo name, and `publish.yml` as the workflow name.
+- [Based Pyright](https://marketplace.visualstudio.com/items?itemName=detachhead.basedpyright)
+  for type checking. Note that this extension works with non-Microsoft VSCode forks like
+  Cursor.
+
+## Documentation
+
+- [uv docs](https://docs.astral.sh/uv/)
+
+- [basedpyright docs](https://docs.basedpyright.com/latest/)
 
 * * *
 
