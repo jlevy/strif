@@ -29,3 +29,4 @@ __all__ = (  # noqa: F405
 )
 
 from .strif import *  # noqa: F403
+from .string_template import *  # noqa: F403
