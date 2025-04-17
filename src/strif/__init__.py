@@ -26,7 +26,15 @@ __all__ = (  # noqa: F405
     "single_line",
     "temp_output_dir",
     "temp_output_file",
+    "insert_multiple",
+    "replace_multiple",
+    "Insertion",
+    "Replacement",
+    "StringTemplate",
+    "AtomicVar",
 )
 
+from .atomic_var import *  # noqa: F403
 from .strif import *  # noqa: F403
+from .string_replace import *  # noqa: F403
 from .string_template import *  # noqa: F403
