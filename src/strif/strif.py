@@ -12,7 +12,7 @@ import re
 import shutil
 import subprocess
 import tempfile
-from collections.abc import Callable, Generator
+from collections.abc import Callable, Generator, Sized
 from contextlib import contextmanager
 from dataclasses import dataclass
 from datetime import datetime, timezone
@@ -310,6 +310,45 @@ def quote_if_needed(
     else:
         return to_str(arg)
 
+
+def is_truthy(value: Any, strict: bool = True) -> bool:
+    """
+    True for all common string and non-string values for true. Useful for parsing
+    string values or command line arguments. (distutils.util.strtobool was similar
+    but is deprecated and only handled strings.)
+
+    Strings:
+      True values: "true", "1", "yes", "on", "y" (stripped, case insensitive)
+      False values: "false", "0", "no", "off", "n", "" (stripped, case insensitive)
+    Sized values (lists, tuples, sets, dicts): Anything with a length > 0 is True
+    Numbers: Anything != 0 is True
+    Booleans: Same as input
+
+    If strict is True, raises ValueError for anything else.
+    If strict is False, defaults to bool().
+    """
+    truthy_values = {"true", "1", "yes", "on", "y"}
+    falsy_values = {"false", "0", "no", "off", "n", ""}
+
+    if value is None:
+        return False
+    elif isinstance(value, str):
+        value = value.strip().lower()
+        if value in truthy_values:
+            return True
+        elif value in falsy_values:
+            return False
+    elif isinstance(value, (int, float)):
+        return value != 0
+    elif isinstance(value, bool):
+        return value
+    elif isinstance(value, Sized):
+        return len(value) > 0
+
+    if strict:
+        raise ValueError(f"Could not convert type {type(value)} to boolean: {repr(value)}")
+
+    return bool(value)
 
 #
 # ---- File operations ----
