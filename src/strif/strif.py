@@ -382,6 +382,7 @@ def is_truthy(value: Any, strict: bool = True) -> bool:
 
     return bool(value)
 
+
 #
 # ---- File operations ----
 
