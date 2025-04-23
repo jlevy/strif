@@ -1,15 +1,18 @@
 # strif
 
-Strif is a tiny (~1000 loc) library of string and file utilities for modern Python.
+Strif is a tiny (~1000 loc) library of a few basic string, file, and object utilities
+for modern Python.
 
-It’s an assembly of some functions and tricks that have repeatedly shown value in
-various projects. The goal is to complement the standard libs, not replace or wrap them.
+It has zero dependencies.
 
-✨ **NEW:** **Version 3.0** now has a few additions and is updated for Python 3.10-3.13!
-✨
+It is simply a few functions and tricks that have repeatedly shown value in various
+projects. The goal is to complement the standard libs and fill in a few gaps, but not
+replace or wrap standard libraries.
+
+✨ **NEW:** **Version 3.0** has additions and updates for Python 3.10-3.13! ✨
 
 A quick overview is here in the readme.
-The libs are all small so see pydoc strings and code for full docs.
+The libs are all small so see pydoc strings or code for full docs.
 
 ## Installation
 
@@ -21,14 +24,6 @@ poetry add strif
 # Or pip
 pip install strif
 ```
-
-## Base36 Identifiers
-
-Several functions offer [base 36](https://en.wikipedia.org/wiki/Base36) identifiers.
-
-It’s frequently preferable to use base 36. Base 36 is briefer than hex, avoids ugly
-non-alphanumeric characters like base 64, and is case insensitive, which is generally
-wise (e.g. due to MacOS case-insensitive filesystems).
 
 ## Text Abbreviations and Formatting
 
@@ -52,6 +47,15 @@ wise (e.g. due to MacOS case-insensitive filesystems).
   with spaces).
 
 ## String Identifiers, Timestamps, and Hashing
+
+> [!TIP]
+> 
+> Note several functions offer [base 36](https://en.wikipedia.org/wiki/Base36)
+> identifiers. It’s frequently preferable to use base 36.
+> 
+> Base 36 is briefer than hex, avoids ugly non-alphanumeric characters like base 64, and
+> is case insensitive, which is generally wise (e.g. due to MacOS case-insensitive
+> filesystems).
 
 - **`new_uid(bits: int = 64)`**
 
@@ -101,6 +105,13 @@ wise (e.g. due to MacOS case-insensitive filesystems).
 
 ## Atomic File Operations with Optional Backups
 
+> [!TIP]
+> 
+> It’s generally good practice when creating files to write to a file with a temporary
+> name, and move it to a final location once the file is complete.
+> This way, you never leave partial, incorrect versions of files in a directory due to
+> interruptions or failures.
+
 - **`atomic_output_file(dest_path: str | Path, make_parents: bool = False,
   backup_suffix: Optional[str] = None, tmp_suffix: str = '.partial')`**
 
@@ -129,28 +140,19 @@ wise (e.g. due to MacOS case-insensitive filesystems).
   Moves a file to a new location, automatically creating parent directories and
   optionally keeping a backup of the destination if it already exists.
 
-It’s generally good practice when creating files to write to a file with a temporary
-name, and move it to a final location once the file is complete.
-This way, you never leave partial, incorrect versions of files in a directory due to
-interruptions or failures.
-
-For example, these can (and in most cases should) be used in place of `shutil.copyfile`
-or `shutil.copytree`:
-
-```python
-copyfile_atomic(source_path, dest_path, make_parents=True, backup_suffix=None)
-```
-
-You also have convenience options for creating parent directories of the target, if they
-don't exist. And you can keep a backup of the target, rather than clobber it, if you
-prefer. Used judiciously, these options can save you some boilerplate coding.
-
-It’s helpful to have syntax sugar for creating files or directories atomically:
+For example, it is generally a good idea to wrap an `open()` call with
+`atomic_output_file()`:
 
 ```python
 with atomic_output_file("some-dir/my-final-output.txt") as temp_target:
     with open(temp_target, "w") as f:
         f.write("some contents")
+```
+
+And this can (and in most cases should) be used in place of `shutil.copyfile`:
+
+```python
+copyfile_atomic(source_path, dest_path, make_parents=True, backup_suffix=None)
 ```
 
 Now if there is some issue during write, the output will instead be at a temporary
@@ -170,6 +172,9 @@ with atomic_output_file("some-dir/my-final-output.txt",
 This creates parent folders as needed (a major convenience).
 And if you would have clobbered a previous output, it keeps a backup with a (fixed or
 uniquely timestamped) suffix.
+
+Used judiciously, these options can save boilerplate coding and avoid debugging ugly
+corner case failures with zero-length or truncated files.
 
 ## Syntax Sugar for Temporary Files
 
