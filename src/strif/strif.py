@@ -1,5 +1,5 @@
 """
-Strif is a tiny (<1000 loc) library of string and file utilities,
+Strif is a tiny (~1000 loc) library of string and file utilities,
 now updated for Python 3.10+.
 
 More information: https://github.com/jlevy/strif
@@ -18,6 +18,38 @@ from dataclasses import dataclass
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
+
+__all__ = (
+    "iso_timestamp",
+    "format_iso_timestamp",
+    "new_uid",
+    "new_timestamped_uid",
+    "clean_alphanum",
+    "clean_alphanum_hash",
+    "file_mtime_hash",
+    "base36_encode",
+    "Hash",
+    "hash_string",
+    "hash_file",
+    "abbrev_str",
+    "abbrev_list",
+    "single_line",
+    "is_quotable",
+    "quote_if_needed",
+    "is_truthy",
+    "move_to_backup",
+    "copy_to_backup",
+    "move_file",
+    "make_parent_dirs",
+    "atomic_output_file",
+    "temp_output_file",
+    "temp_output_dir",
+    "copyfile_atomic",
+    "copytree_atomic",
+    "rmtree_or_file",
+    "chmod_native",
+    "lenb",
+)
 
 # A pre-opened handle to /dev/null.
 DEV_NULL = open(os.devnull, "wb")

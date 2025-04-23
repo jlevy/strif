@@ -1,5 +1,7 @@
 from typing import TypeAlias
 
+__all__ = ["Insertion", "insert_multiple", "Replacement", "replace_multiple"]
+
 Insertion = tuple[int, str]
 
 

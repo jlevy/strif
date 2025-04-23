@@ -4,6 +4,8 @@ from collections.abc import Callable
 from contextlib import contextmanager
 from typing import Any, Generic, TypeVar
 
+__all__ = ["AtomicVar"]
+
 T = TypeVar("T")
 
 
