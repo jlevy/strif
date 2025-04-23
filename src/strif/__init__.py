@@ -1,7 +1,6 @@
-__all__ = (
+__all__ = (  # noqa: F405
     # atomic_var.py
     "AtomicVar",
-
     # strif.py
     "iso_timestamp",
     "format_iso_timestamp",
@@ -32,13 +31,11 @@ __all__ = (
     "rmtree_or_file",
     "chmod_native",
     "lenb",
-
-    # string_replace.py 
+    # string_replace.py
     "Insertion",
     "Replacement",
     "insert_multiple",
     "replace_multiple",
-
     # string_template.py
     "StringTemplate",
 )
