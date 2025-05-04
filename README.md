@@ -3,13 +3,13 @@
 Strif is a tiny (~1000 loc) library of a few basic string, file, and object utilities
 for modern Python.
 
-It has zero dependencies.
+It has **zero dependencies**.
 
 It is simply a few functions and tricks that have repeatedly shown value in various
 projects. The goal is to complement the standard libs and fill in a few gaps, but not
 replace or wrap standard libraries.
 
-✨ **NEW:** **Version 3.0** has additions and updates for Python 3.10-3.13! ✨
+✨ **NEW:** **Version 3.0** is out and has additions and updates for Python 3.10-3.13! ✨
 
 A quick overview is here in the readme.
 The libs are all small so see pydoc strings or code for full docs.
@@ -50,12 +50,16 @@ pip install strif
 
 > [!TIP]
 > 
-> Note several functions offer [base 36](https://en.wikipedia.org/wiki/Base36)
-> identifiers. It’s frequently preferable to use base 36.
+> These functions use [base 36](https://en.wikipedia.org/wiki/Base36). In my humble
+> opinion, base 36 ids are underrated and should be used more often.
 > 
-> Base 36 is briefer than hex, avoids ugly non-alphanumeric characters like base 64, and
-> is case insensitive, which is generally wise (e.g. due to MacOS case-insensitive
-> filesystems).
+> Base 36 is briefer than hex and avoids ugly non-alphanumeric characters like base 64.
+> And they are case insensitive, which is generally wise: If you use identifiers for
+> filenames, you definitely should prefer case insensitive identifiers because of
+> case-insensitive filesystems (like macOS). And they're easier to read aloud over the
+> phone for an auth code or to type manually.
+> 
+> If you need a readable, concise identifier, api key format, or hash format, consider
 
 - **`new_uid(bits: int = 64)`**
 
@@ -286,10 +290,19 @@ with lazy_var.lock:
 Because it saves time, saves you stupid bugs and clumsy repetition, and has zero (yes
 zero) dependencies.
 
+### Aren't there other libraries that offer these utilities?
+
+A few yes, but most libs I've seen that offer general-purpose tools are larger or more
+opinionated. And some like `atomic_output_file()` or the base36 tools I find useful but
+haven't seen equivalents elsewhere.
+
+If you don't want the dependency on strif, also feel free to just copy the bit you want!
+They're each short.
+
 ### Is it mature?
 
 I’ve used many of these functions in production situations for years.
-But it doesn't have comprehensive tests at the moment.
+It doesn't have comprehensive tests, however.
 
 * * *
 
