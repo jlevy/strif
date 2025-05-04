@@ -5,6 +5,7 @@ now updated for Python 3.10+.
 More information: https://github.com/jlevy/strif
 """
 
+import base64
 import hashlib
 import os
 import random
@@ -191,7 +192,11 @@ class Hash:
     Base 36 format is good for short, friendly identifiers. Length of a SHA1 hash
     in base36 is ~32 chars.
 
-    Example:
+    Examples:
+      hash_string("foo").value
+      -> b'\n\n\x9f*gr\x94%W\xabSU\xd7j\xf4B\xf8\xf6^\x01'
+      hash_string("foo").base64
+      -> 'CgqfKmdylCVXq1NV12r0Qvj2XgE='
       hash_string("foo").base36
       -> '1e6gpc3ehk0mu2jqu8cg42g009s796b'
     """
@@ -202,6 +207,10 @@ class Hash:
     @property
     def hex(self) -> str:
         return self.value.hex()
+
+    @property
+    def base64(self) -> str:
+        return base64.b64encode(self.value).decode("utf-8")
 
     @property
     def base36(self) -> str:
