@@ -1,11 +1,11 @@
 # strif
 
-Strif is a tiny (\~1000 loc) library of a \~30 string, file, and object utilities for
+Strif is a tiny (\~1000 loc) library of \~30 string, file, and object utilities for
 modern Python. It has **zero dependencies**.
 
 It is simply a few functions and tricks that have repeatedly shown value in various
-projects. The goal is to complement the standard libs and fill in a few gaps, but not
-replace or wrap standard libraries.
+projects. The goal is not to give a comprehensive suite of utilities but simply to
+complement the standard libraries and fill in a few gaps.
 
 ✨ **NEW:** **Version 3.0** is out and has additions and updates for Python 3.10-3.13! ✨
 
@@ -35,6 +35,13 @@ replace or wrap standard libraries.
 
 That's all! They are all quite simple.
 The libs are all small so see pydoc strings or code for full docs.
+
+> [!TIP]
+> 
+> If you're using strif, you might also want to check out
+> [prettyfmt](https://github.com/jlevy/prettyfmt), another small library built on strif
+> that has some extra functions for pretty, human-readable outputs for objects, sizes,
+> times and dates, etc.
 
 ## Installation
 
@@ -72,16 +79,20 @@ pip install strif
 
 > [!TIP]
 > 
-> These functions use [base 36](https://en.wikipedia.org/wiki/Base36). In my humble
-> opinion, base 36 ids are underrated and should be used more often.
+> These functions use [base 36](https://en.wikipedia.org/wiki/Base36). If you need a
+> readable, concise identifier, api key format, or hash format, consider base 36. In my
+> humble opinion, base 36 ids are underrated and should be used more often:
 > 
-> Base 36 is briefer than hex and avoids ugly non-alphanumeric characters like base 64.
-> And they are case insensitive, which is generally wise: If you use identifiers for
-> filenames, you definitely should prefer case insensitive identifiers because of
-> case-insensitive filesystems (like macOS). And they're easier to read aloud over the
-> phone for an auth code or to type manually.
+> - Base 36 is briefer than hex and yet avoids ugly non-alphanumeric characters.
+>
+> - Base 36 is case insensitive.
+>   If you use identifiers for filenames, you definitely should prefer case insensitive
+>   identifiers because of case-insensitive filesystems (like macOS).
+>
+> - Base 36 is easier to read aloud over the phone for an auth code or to type manually.
+>
+> - Base 36 is only `log(64)/log(36) - 1 = 16%` longer than base 64.
 > 
-> If you need a readable, concise identifier, api key format, or hash format, consider
 
 - **`new_uid(bits: int = 64)`**
 
