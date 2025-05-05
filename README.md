@@ -1,9 +1,7 @@
 # strif
 
-Strif is a tiny (~1000 loc) library of a few basic string, file, and object utilities
-for modern Python.
-
-It has **zero dependencies**.
+Strif is a tiny (\~1000 loc) library of a \~30 string, file, and object utilities for
+modern Python. It has **zero dependencies**.
 
 It is simply a few functions and tricks that have repeatedly shown value in various
 projects. The goal is to complement the standard libs and fill in a few gaps, but not
@@ -11,7 +9,31 @@ replace or wrap standard libraries.
 
 ✨ **NEW:** **Version 3.0** is out and has additions and updates for Python 3.10-3.13! ✨
 
-A quick overview is here in the readme.
+## Key Features
+
+- **Atomic file operations** with handling of parent directories and backups.
+  This is essential for thread safety and good hygiene so partial or corrupt outputs are
+  never present in final file locations, even in case a program crashes.
+  See `atomic_output_file()`, `copyfile_atomic()`.
+
+- **Abbreviate and quote strings**, which is useful for logging a clean way.
+  See `abbrev_str()`, `single_line()`, `quote_if_needed()`.
+
+- **Random UIDs** that use **base 36** (for concise, case-insensitive ids) and **ISO
+  timestamped ids** (that are unique but also conveniently sort in order of creation).
+  See `new_uid()`, `new_timestamped_uid()`.
+
+- **File hashing** with consistent convenience methods for hex, base36, and base64
+  formats. See `hash_string()`, `hash_file()`, `file_mtime_hash()`.
+
+- **An `AtomicVar` type** that is a convenient way to have an `RLock` on a variable and
+  remind yourself to always access the variable in a thread-safe way.
+
+- **String utilities** for replacing or adding multiple substrings at once and for
+  validating and type checking very simple string templates.
+  See `StringTemplate`, `replace_multiple()`, `insert_multiple()`.
+
+That's all! They are all quite simple.
 The libs are all small so see pydoc strings or code for full docs.
 
 ## Installation
@@ -65,6 +87,7 @@ pip install strif
 
   Generates a random base36 alphanumeric string with at least the specified bits of
   randomness. Suitable for filenames (especially on case-insensitive filesystems).
+  Uses `random.SystemRandom()` for randomness.
 
 - **`new_timestamped_uid(bits: int = 32)`**
 
@@ -199,38 +222,11 @@ Note these don’t delete files in case of error, which is usually what you want
 Add `always_clean=True` if you want the temporary file or directory to be removed no
 matter what.
 
-## Multiple String Replacements
-
-- **`insert_multiple(text: str, insertions: list[Insertion]) -> str`**
-
-  Insert multiple strings into `text` at the given offsets, at once.
-
-- **`replace_multiple(text: str, replacements: list[Replacement]) -> str`**
-
-  Replace multiple substrings in `text` with new strings, simultaneously.
-  The replacements are a list of tuples (start_offset, end_offset, new_string).
-
-## Simple String Template
-
-A validated template string that supports only specified fields.
-Can subclass to have a type with a given set of `allowed_fields`. Provide a type with a
-field name to allow validation of int/float format strings.
-
-Examples:
-
-```python
->>> t = StringTemplate("{name} is {age} years old", ["name", "age"])
->>> t.format(name="Alice", age=30)
-'Alice is 30 years old'
-
->>> t = StringTemplate("{count:3d}@{price:.2f}", [("count", int), ("price", float)])
->>> t.format(count=10, price=19.99)
-' 10@19.99'
-```
-
 ## Atomic Vars
 
 `AtomicVar` is a simple zero-dependency thread-safe variable that works for any type.
+It simply combines a value with reentrant lock (`threading.RLock`) to make thread-safe
+use of the variable less error prone.
 
 Often the standard "Pythonic" approach is to use locks directly, but for some common use
 cases, `AtomicVar` may be simpler and more readable.
@@ -283,6 +279,35 @@ with lazy_var.lock:
             lazy_var.set(expensive_calculation())
 ```
 
+## Simple String Template
+
+A validated template string that supports only specified fields.
+Can subclass to have a type with a given set of `allowed_fields`. Provide a type with a
+field name to allow validation of int/float format strings.
+
+Examples:
+
+```python
+>>> t = StringTemplate("{name} is {age} years old", ["name", "age"])
+>>> t.format(name="Alice", age=30)
+'Alice is 30 years old'
+
+>>> t = StringTemplate("{count:3d}@{price:.2f}", [("count", int), ("price", float)])
+>>> t.format(count=10, price=19.99)
+' 10@19.99'
+```
+
+## Multiple String Replacements
+
+- **`insert_multiple(text: str, insertions: list[Insertion]) -> str`**
+
+  Insert multiple strings into `text` at the given offsets, at once.
+
+- **`replace_multiple(text: str, replacements: list[Replacement]) -> str`**
+
+  Replace multiple substrings in `text` with new strings, simultaneously.
+  The replacements are a list of tuples (start_offset, end_offset, new_string).
+
 ## FAQ
 
 ### Why bother, if it’s so short?
@@ -290,19 +315,26 @@ with lazy_var.lock:
 Because it saves time, saves you stupid bugs and clumsy repetition, and has zero (yes
 zero) dependencies.
 
-### Aren't there other libraries that offer these utilities?
+### Are there other libraries that offer these utilities?
 
-A few yes, but most libs I've seen that offer general-purpose tools are larger or more
-opinionated. And some like `atomic_output_file()` or the base36 tools I find useful but
-haven't seen equivalents elsewhere.
+A few yes.
+Some support has improved in Python 3; for example `textwrap.shorten()` can be
+used instead of `abbrev_str()` (that said, strif also offers `abbrev_list()`).
+
+[boltons](https://github.com/mahmoud/boltons) is a much larger library of general
+utilities. strif is intended to be much smaller.
+The [atomicwrites](https://github.com/untitaker/python-atomicwrites) library is similar
+to `atomic_output_file()` but is no longer maintained.
+For some others like the base36 tools I haven't seen equivalents elsewhere.
 
 If you don't want the dependency on strif, also feel free to just copy the bit you want!
-They're each short.
+They're short.
 
 ### Is it mature?
 
 I’ve used many of these functions in production situations for years.
-It doesn't have comprehensive tests, however.
+We don't have comprehensive tests currently.
+But they're mostly so small you can inspect them yourself.
 
 * * *
 

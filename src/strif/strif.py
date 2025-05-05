@@ -96,6 +96,7 @@ def new_uid(bits: int = 64) -> str:
     """
     A random alphanumeric value with at least the specified bits of randomness. We use base 36,
     i.e., not case sensitive. Note this makes it suitable for filenames even on case-insensitive disks.
+    Uses `random.SystemRandom()` for randomness.
     """
     chars = "0123456789abcdefghijklmnopqrstuvwxyz"
     length = int(bits / 5.16) + 1  # log2(36) ≈ 5.17
@@ -253,6 +254,9 @@ def abbrev_str(string: str, max_len: int | None = 80, indicator: str = "…") ->
     """
     Abbreviate a string, adding an indicator like an ellipsis if required. Set `max_len` to
     None or 0 not to truncate items.
+
+    Note this function predates `textwrap.shorten()`, which is now in the standard library.
+    You may want to use that instead.
     """
     if not string or not max_len or len(string) <= max_len:
         return string
@@ -260,7 +264,6 @@ def abbrev_str(string: str, max_len: int | None = 80, indicator: str = "…") ->
         return string[:max_len]
     else:
         return string[: max_len - len(indicator)] + indicator
-
 
 def abbrev_list(
     items: list[Any],
