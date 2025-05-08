@@ -265,6 +265,7 @@ def abbrev_str(string: str, max_len: int | None = 80, indicator: str = "…") ->
     else:
         return string[: max_len - len(indicator)] + indicator
 
+
 def abbrev_list(
     items: list[Any],
     max_items: int = 10,
@@ -444,7 +445,7 @@ def move_to_backup(path: str | Path, backup_suffix: str = DEFAULT_BACKUP_SUFFIX)
 
     backup_path = _prepare_for_backup(path, backup_suffix)
     try:
-        shutil.move(str(path), str(backup_path))
+        path.replace(backup_path)
     except FileNotFoundError:
         pass
 
@@ -515,13 +516,27 @@ def atomic_output_file(
     infinitely many by putting the special string '{timestamp}' into the `backup_suffix`
     parameter.
 
-    Note that with `backup_suffix`, the output file may be absent *very* briefly
-    since the old copy needs to be moved before the new one is moved into place.
-    Without `backup_suffix`, the target is clobbered on the filesystem directly so
-    will always exist.
-
     Enable `force` to force the destructive corner case of overwriting an existing
     file or directory with no backup.
+
+    Example usage:
+    ```
+        with atomic_output_file("some-dir/my-final-output.txt") as temp_target:
+            with open(temp_target, "w") as f:
+                f.write("some contents")
+    ```
+
+    Additional notes:
+
+    With `backup_suffix`, the output file may be absent *very* briefly
+    since the old copy needs to be moved before the new one is moved into place.
+    Without `backup_suffix`, the target is replaced on the filesystem directly so
+    will always exist.
+
+    While the above code is fine for most situations, as with any file writes,
+    for guaranteed durability (i.e. never losing data even with a crash) the client
+    should call `f.flush()` and `os.fsync(f.fileno())` on the open file object before
+    closing it.
     """
     dest_path = Path(dest_path)
     if dest_path == Path(os.devnull):
@@ -548,7 +563,8 @@ def atomic_output_file(
                 shutil.rmtree(dest_path)
             else:
                 raise FileExistsError(f"Destination is a directory: {quote_if_needed(dest_path)}")
-        shutil.move(tmp_path, dest_path)
+
+        tmp_path.replace(dest_path)
 
 
 @contextmanager
