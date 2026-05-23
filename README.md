@@ -17,54 +17,42 @@ complement the standard libraries and fill in a few gaps.
 > that has some extra functions for pretty, human-readable outputs for objects, sizes,
 > times and dates, etc.
 
-## Key Features
+## Why Use strif (Especially with Coding Agents)
 
-- **Atomic file operations** with handling of parent directories and backups.
-  This is essential for thread safety and good hygiene so partial or corrupt outputs are
-  never present in final file locations, even in case a program crashes.
+Strif is a simple way to get better Python out of coding agents. It's small enough that
+once you tell an agent to use it, it adopts it consistently—so you can enforce good habits
+like atomic file writes, sortable timestamped ids, and stable hashing instead of hoping
+the agent reinvents them correctly each time. A prompt as simple as this is usually enough:
+
+> Run `uv add strif` and review its docs, then always use it for atomic file writes,
+> timestamps and ids, and similar best practices from now on.
+
+The whole library (all zero-dependency):
+
+- **Atomic file operations** with parent-dir creation and optional backups, so an
+  interrupted or crashed run never leaves a partial or corrupt file in its final location.
   See `atomic_output_file()`, `atomic_write_text()`, `atomic_write_bytes()`,
   `copyfile_atomic()`.
 
-- **Abbreviate and quote strings**, which is useful for logging a clean way.
-  See `abbrev_str()`, `single_line()`, `quote_if_needed()`.
-
-- **Random UIDs** that use **base 36** (for concise, case-insensitive ids) and **ISO
-  timestamped ids** (that are unique but also conveniently sort in order of creation).
+- **Random and timestamped ids** in **base 36** (concise, case-insensitive, filename-safe),
+  including ISO-timestamped ids that sort by creation time.
   See `new_uid()`, `new_timestamped_uid()`.
 
-- **File hashing** with consistent convenience methods for hex, base36, and base64
-  formats. See `hash_string()`, `hash_file()`, `file_mtime_hash()`.
+- **File and string hashing** with convenient hex, base36, and base64 outputs—good for
+  cache keys and dedup. See `hash_string()`, `hash_file()`, `file_mtime_hash()`.
 
-- **An `AtomicVar` type** that is a convenient way to have an `RLock` on a variable and
-  remind yourself to always access the variable in a thread-safe way.
+- **An `AtomicVar` type**: a thread-safe variable (an `RLock` around any value) that makes
+  correct concurrent access the easy path.
 
-- **String utilities** for replacing or adding multiple substrings at once and for
-  validating and type checking very simple string templates.
+- **String utilities** for replacing or inserting multiple substrings at once and for
+  validated, type-checked string templates.
   See `StringTemplate`, `replace_multiple()`, `insert_multiple()`.
 
-That's all! They are all quite simple.
-The libs are all small so see pydoc strings or code for full docs.
+- **Abbreviate and quote strings** for clean logging and display.
+  See `abbrev_str()`, `single_line()`, `quote_if_needed()`.
 
-## Using strif with LLM Agents
-
-Strif is handy for code that generates files, which is increasingly often AI agent code.
-
-- **Atomic writes for streamed or generated output.** If a generation is interrupted or
-  crashes mid-write, you never leave a truncated or corrupt file in its final location.
-  `atomic_write_text("out.md", content)` is a one-liner for the common case.
-
-- **Content hashing for caching and dedup.** Use `hash_file()` or `hash_string()` to key
-  a cache on file contents, or `file_mtime_hash()` for a fast (content-free) cache key.
-
-- **Sortable, readable run ids.** `new_timestamped_uid()` gives ids that sort by creation
-  time, which is convenient for logs and scratch directories.
-
-```python
-from strif import atomic_write_text
-
-# Safe even if the process dies partway through writing:
-atomic_write_text("some-dir/output.md", generated_text, make_parents=True)
-```
+That's all! They are all quite simple and small, so see the pydoc strings or code for
+full docs.
 
 ## Installation
 
