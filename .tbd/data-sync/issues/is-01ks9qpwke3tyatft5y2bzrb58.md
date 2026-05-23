@@ -3,9 +3,9 @@ type: is
 id: is-01ks9qpwke3tyatft5y2bzrb58
 title: "v3.1.0: agent-friendly API, test coverage, and tooling refresh"
 kind: epic
-status: open
+status: closed
 priority: 1
-version: 14
+version: 15
 labels: []
 dependencies: []
 child_order_hints:
@@ -23,7 +23,9 @@ child_order_hints:
   - is-01ks9qsd85d8tr84krx5dc6s22
   - is-01ks9qszp2tkz3t34va9506jd7
 created_at: 2026-05-23T06:17:39.693Z
-updated_at: 2026-05-23T06:19:21.153Z
+updated_at: 2026-05-23T21:03:52.747Z
+closed_at: 2026-05-23T21:03:52.747Z
+close_reason: null
 ---
 Next minor release (v3.1.0) for strif. Groups three themes:
 
