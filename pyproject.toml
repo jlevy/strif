@@ -27,6 +27,7 @@ classifiers = [
     "Operating System :: OS Independent",
     "Programming Language :: Python",
     "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
     "Programming Language :: Python :: 3.13",
@@ -54,10 +55,6 @@ dev = [
     "funlog>=0.2.0",
 ]
 
-[project.scripts]
-# Add script entry points here:
-strif = "strif:main"
-
 # ---- Build system ----
 
 # Dynamic versioning from:
@@ -76,7 +73,7 @@ source = "uv-dynamic-versioning"
 [tool.uv-dynamic-versioning]
 vcs = "git"
 style = "pep440"
-bump = "true"
+bump = true
 
 [tool.hatch.build.targets.wheel]
 # The source location for the package.
