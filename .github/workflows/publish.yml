@@ -1,16 +1,21 @@
 name: Publish to PyPI
 
+# Triggered by pushing a `v*` tag. The workflow uploads to PyPI via trusted
+# publishing and then creates a GitHub Release with auto-generated notes.
+# An agent (or human) just needs to push a tag — no separate release step.
+
 on:
-  release:
-    types: [published]
-  workflow_dispatch: # Enable manual trigger.
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch: # Enable manual trigger from the Actions UI.
 
 jobs:
   build-and-publish:
     runs-on: ubuntu-latest
     permissions:
-      id-token: write # Mandatory for OIDC.
-      contents: read
+      id-token: write   # Mandatory for OIDC (PyPI trusted publishing).
+      contents: write   # Required for creating the GitHub Release.
     steps:
       - name: Checkout (official GitHub action)
         uses: actions/checkout@v6
@@ -42,3 +47,9 @@ jobs:
         # Although uv is newer and faster, the "official" publishing option is the one from PyPA,
         # which uses twine. If desired, replace `uv publish` with:
         # uses: pypa/gh-action-pypi-publish@release/v1
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          generate_release_notes: true
+          prerelease: ${{ contains(github.ref_name, '-') }}
