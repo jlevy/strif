@@ -7,8 +7,15 @@ It is simply a few functions and tricks that have repeatedly shown value in vari
 projects. The goal is not to give a comprehensive suite of utilities but simply to
 complement the standard libraries and fill in a few gaps.
 
-✨ **NEW:** **Version 3.1** adds `atomic_write_text()`/`atomic_write_bytes()`, exposes
-`__version__`, and supports Python 3.10-3.14. ✨
+> [!TIP]
+> 
+> ✨ **NEW:** **Version 3.1** adds `atomic_write_text()`/`atomic_write_bytes()`, exposes
+> `__version__`, and supports Python 3.10-3.14. ✨
+>
+> If you're using strif, you might also want to check out
+> [prettyfmt](https://github.com/jlevy/prettyfmt), another small library built on strif
+> that has some extra functions for pretty, human-readable outputs for objects, sizes,
+> times and dates, etc.
 
 ## Key Features
 
@@ -37,13 +44,6 @@ complement the standard libraries and fill in a few gaps.
 
 That's all! They are all quite simple.
 The libs are all small so see pydoc strings or code for full docs.
-
-> [!TIP]
-> 
-> If you're using strif, you might also want to check out
-> [prettyfmt](https://github.com/jlevy/prettyfmt), another small library built on strif
-> that has some extra functions for pretty, human-readable outputs for objects, sizes,
-> times and dates, etc.
 
 ## Using strif with LLM Agents
 
