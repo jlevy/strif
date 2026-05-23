@@ -18,13 +18,13 @@ jobs:
       contents: write   # Required for creating the GitHub Release.
     steps:
       - name: Checkout (official GitHub action)
-        uses: actions/checkout@v6
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
         with:
           # Important for versioning plugins:
           fetch-depth: 0
 
       - name: Install uv (official Astral action)
-        uses: astral-sh/setup-uv@v7
+        uses: astral-sh/setup-uv@37802adc94f370d6bfd71619e3f0bf239e1f3b78 # v7.6.0
         with:
           version: "0.10.2"
           enable-cache: true
@@ -49,7 +49,10 @@ jobs:
         # uses: pypa/gh-action-pypi-publish@release/v1
 
       - name: Create GitHub Release
-        uses: softprops/action-gh-release@v2
+        # Pinned to commit SHA because this is a single-maintainer third-party action
+        # that runs alongside a publish step with write permissions. Update the SHA
+        # together with the version comment when bumping.
+        uses: softprops/action-gh-release@3bb12739c298aeb8a4eeaf626c5b8d85266b0e65 # v2.6.2
         with:
           generate_release_notes: true
           prerelease: ${{ contains(github.ref_name, '-') }}
