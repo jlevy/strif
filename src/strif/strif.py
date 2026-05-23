@@ -21,6 +21,7 @@ from pathlib import Path
 from typing import Any
 
 __all__ = (
+    "DEV_NULL",
     "iso_timestamp",
     "format_iso_timestamp",
     "new_uid",
@@ -60,7 +61,6 @@ TIMESTAMP_VAR = "{timestamp}"
 DEFAULT_BACKUP_SUFFIX = f"{TIMESTAMP_VAR}{BACKUP_SUFFIX}"
 
 _RANDOM = random.SystemRandom()
-_RANDOM.seed()
 
 #
 # ---- Timestamps ----
@@ -383,10 +383,10 @@ def is_truthy(value: Any, strict: bool = True) -> bool:
             return True
         elif value in falsy_values:
             return False
-    elif isinstance(value, (int, float)):
-        return value != 0
     elif isinstance(value, bool):
         return value
+    elif isinstance(value, (int, float)):
+        return value != 0
     elif isinstance(value, Sized):
         return len(value) > 0
 
@@ -452,9 +452,11 @@ def move_to_backup(path: str | Path, backup_suffix: str = DEFAULT_BACKUP_SUFFIX)
 
 def copy_to_backup(path: str | Path, backup_suffix: str = DEFAULT_BACKUP_SUFFIX):
     """
-    Same as `move_to_backup()` but only copies.
+    Same as `move_to_backup()` but only copies. If the path doesn't exist, do nothing.
     """
     path = Path(path)
+    if not path.exists():
+        return
     backup_path = _prepare_for_backup(path, backup_suffix)
     if path.is_dir():
         copytree_atomic(path, backup_path)
@@ -474,7 +476,7 @@ def move_file(
     """
     if not keep_backup and dest_path.exists():
         raise FileExistsError(f"Destination file already exists: {quote_if_needed(str(dest_path))}")
-    if keep_backup and src_path.exists():
+    if keep_backup and dest_path.exists():
         move_to_backup(str(dest_path), backup_suffix=backup_suffix)
 
     dest_path.parent.mkdir(parents=True, exist_ok=True)
@@ -590,6 +592,10 @@ def temp_output_file(
     result = (fd, Path(path))
 
     def clean():
+        try:
+            os.close(fd)
+        except OSError:
+            pass
         try:
             rmtree_or_file(result[1], ignore_errors=True)
         except OSError:

@@ -2,6 +2,7 @@ __all__ = (  # noqa: F405
     # atomic_var.py
     "AtomicVar",
     # strif.py
+    "DEV_NULL",
     "iso_timestamp",
     "format_iso_timestamp",
     "new_uid",
