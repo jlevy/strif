@@ -242,9 +242,6 @@ def hash_file(file_path: str | Path, algorithm: HashAlgorithm | str = "sha1") ->
     """
     Hash the content of a file.
     """
-    if algorithm not in hashlib.algorithms_available:
-        raise ValueError(f"Unsupported hash algorithm: {algorithm}")
-
     hasher = hashlib.new(algorithm)
     file_path = Path(file_path)
     with file_path.open("rb") as file:
