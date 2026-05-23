@@ -1,4 +1,7 @@
+from importlib.metadata import PackageNotFoundError, version
+
 __all__ = (  # noqa: F405
+    "__version__",
     # atomic_var.py
     "AtomicVar",
     # strif.py
@@ -11,6 +14,7 @@ __all__ = (  # noqa: F405
     "clean_alphanum_hash",
     "file_mtime_hash",
     "base36_encode",
+    "HashAlgorithm",
     "Hash",
     "hash_string",
     "hash_file",
@@ -25,6 +29,8 @@ __all__ = (  # noqa: F405
     "move_file",
     "make_parent_dirs",
     "atomic_output_file",
+    "atomic_write_text",
+    "atomic_write_bytes",
     "temp_output_file",
     "temp_output_dir",
     "copyfile_atomic",
@@ -41,7 +47,13 @@ __all__ = (  # noqa: F405
     "StringTemplate",
 )
 
-from .atomic_var import *  # noqa: F403
-from .strif import *  # noqa: F403
-from .string_replace import *  # noqa: F403
-from .string_template import *  # noqa: F403
+try:
+    __version__ = version("strif")
+except PackageNotFoundError:
+    # Running from a source tree that isn't installed.
+    __version__ = "0.0.0.dev0"
+
+from .atomic_var import *  # noqa: F403, E402
+from .strif import *  # noqa: F403, E402
+from .string_replace import *  # noqa: F403, E402
+from .string_template import *  # noqa: F403, E402

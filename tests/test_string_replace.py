@@ -1,53 +1,46 @@
+import pytest
+
 from strif.string_replace import Insertion, Replacement, insert_multiple, replace_multiple
 
 
+def test_named_tuple_fields_and_positional_compat():
+    # NamedTuple gives named access while staying tuple-compatible, so both the named
+    # and positional/unpacking APIs must work.
+    ins = Insertion(offset=5, text=",")
+    assert ins.offset == 5 and ins.text == ","
+    assert ins == (5, ",")
+
+    start, end, text = Replacement(0, 3, "x")
+    assert (start, end, text) == (0, 3, "x")
+
+
 def test_insert_multiple():
-    text = "hello world"
-    insertions: list[Insertion] = [(5, ",")]
-    expected = "hello, world"
-    assert insert_multiple(text, insertions) == expected, "Single insertion failed"
-
-    text = "hello world"
-    insertions = [(0, "Start "), (11, " End")]
-    expected = "Start hello world End"
-    assert insert_multiple(text, insertions) == expected, "Multiple insertions failed"
-
-    text = "short"
-    insertions = [(10, " end")]
-    expected = "short end"
-    assert insert_multiple(text, insertions) == expected, "Out of bounds insertion failed"
-
-    text = "negative test"
-    insertions = [(-1, "ss")]
-    expected = "negative tessst"
-    assert insert_multiple(text, insertions) == expected, "Negative offset insertion failed"
-
-    text = "no change"
-    insertions = []
-    expected = "no change"
-    assert insert_multiple(text, insertions) == expected, "Empty insertions failed"
+    assert insert_multiple("hello world", [Insertion(5, ",")]) == "hello, world"
+    assert (
+        insert_multiple("hello world", [Insertion(0, "Start "), Insertion(11, " End")])
+        == "Start hello world End"
+    )
+    # Out-of-bounds offset clamps to the end.
+    assert insert_multiple("short", [Insertion(10, " end")]) == "short end"
+    # Negative offset indexes from the end.
+    assert insert_multiple("negative test", [Insertion(-1, "ss")]) == "negative tessst"
+    assert insert_multiple("no change", []) == "no change"
 
 
 def test_replace_multiple():
-    text = "The quick brown fox"
-    replacements: list[Replacement] = [(4, 9, "slow"), (16, 19, "dog")]
-    expected = "The slow brown dog"
-    assert replace_multiple(text, replacements) == expected, "Multiple replacements failed"
+    assert (
+        replace_multiple(
+            "The quick brown fox", [Replacement(4, 9, "slow"), Replacement(16, 19, "dog")]
+        )
+        == "The slow brown dog"
+    )
+    # Out-of-bounds end clamps to the end.
+    assert (
+        replace_multiple("short text", [Replacement(5, 10, " longer text")]) == "short longer text"
+    )
+    assert replace_multiple("no change", []) == "no change"
 
-    text = "overlap test"
-    replacements = [(0, 6, "start"), (5, 10, "end")]
-    try:
-        replace_multiple(text, replacements)
-        raise AssertionError("Overlapping replacements did not raise ValueError")
-    except ValueError:
-        pass  # Expected exception
 
-    text = "short text"
-    replacements = [(5, 10, " longer text")]
-    expected = "short longer text"
-    assert replace_multiple(text, replacements) == expected, "Out of bounds replacement failed"
-
-    text = "no change"
-    replacements = []
-    expected = "no change"
-    assert replace_multiple(text, replacements) == expected, "Empty replacements failed"
+def test_replace_multiple_rejects_overlap():
+    with pytest.raises(ValueError):
+        replace_multiple("overlap test", [Replacement(0, 6, "start"), Replacement(5, 10, "end")])

@@ -1,8 +1,13 @@
-from typing import TypeAlias
+from __future__ import annotations
+
+from typing import NamedTuple
 
 __all__ = ["Insertion", "insert_multiple", "Replacement", "replace_multiple"]
 
-Insertion = tuple[int, str]
+
+class Insertion(NamedTuple):
+    offset: int
+    text: str
 
 
 def insert_multiple(text: str, insertions: list[Insertion]) -> str:
@@ -19,7 +24,10 @@ def insert_multiple(text: str, insertions: list[Insertion]) -> str:
     return "".join(chunks)
 
 
-Replacement: TypeAlias = tuple[int, int, str]
+class Replacement(NamedTuple):
+    start: int
+    end: int
+    text: str
 
 
 def replace_multiple(text: str, replacements: list[Replacement]) -> str:
