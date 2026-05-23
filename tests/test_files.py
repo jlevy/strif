@@ -5,6 +5,8 @@ import pytest
 
 from strif import (
     atomic_output_file,
+    atomic_write_bytes,
+    atomic_write_text,
     copy_to_backup,
     is_truthy,
     move_file,
@@ -63,6 +65,37 @@ def test_atomic_output_file_force_replaces_dir(tmp_path: Path):
         tmp.write_text("now a file")
     assert target.is_file()
     assert target.read_text() == "now a file"
+
+
+def test_atomic_output_file_timestamp_backups_do_not_clobber(tmp_path: Path):
+    out = tmp_path / "out.txt"
+    out.write_text("v1")
+    with atomic_output_file(out, backup_suffix="{timestamp}.bak") as tmp:
+        tmp.write_text("v2")
+    with atomic_output_file(out, backup_suffix="{timestamp}.bak") as tmp:
+        tmp.write_text("v3")
+    # Each write keeps its own uniquely-named backup, so both prior versions survive.
+    backups = sorted(p.read_text() for p in tmp_path.glob("out.txt*bak"))
+    assert out.read_text() == "v3"
+    assert backups == ["v1", "v2"]
+
+
+def test_atomic_write_text_and_bytes(tmp_path: Path):
+    text_path = tmp_path / "a.txt"
+    atomic_write_text(text_path, "hello")
+    assert text_path.read_text() == "hello"
+
+    bytes_path = tmp_path / "b.bin"
+    atomic_write_bytes(bytes_path, b"\x00\x01\x02")
+    assert bytes_path.read_bytes() == b"\x00\x01\x02"
+
+
+def test_atomic_write_text_make_parents_and_backup(tmp_path: Path):
+    nested = tmp_path / "sub" / "a.txt"
+    atomic_write_text(nested, "first", make_parents=True)
+    atomic_write_text(nested, "second", backup_suffix=".bak")
+    assert nested.read_text() == "second"
+    assert (tmp_path / "sub" / "a.txt.bak").read_text() == "first"
 
 
 @pytest.mark.skipif(not os.path.exists("/proc/self/fd"), reason="Linux-only fd accounting")

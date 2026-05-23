@@ -18,7 +18,7 @@ from contextlib import contextmanager
 from dataclasses import dataclass
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import Any
+from typing import Any, Literal
 
 __all__ = (
     "DEV_NULL",
@@ -30,6 +30,7 @@ __all__ = (
     "clean_alphanum_hash",
     "file_mtime_hash",
     "base36_encode",
+    "HashAlgorithm",
     "Hash",
     "hash_string",
     "hash_file",
@@ -44,6 +45,8 @@ __all__ = (
     "move_file",
     "make_parent_dirs",
     "atomic_output_file",
+    "atomic_write_text",
+    "atomic_write_bytes",
     "temp_output_file",
     "temp_output_dir",
     "copyfile_atomic",
@@ -183,6 +186,10 @@ def base36_encode(n: int) -> str:
     return encoded
 
 
+HashAlgorithm = Literal["sha1", "sha256", "sha384", "sha512", "md5", "blake2b", "blake2s"]
+"""Common hash algorithms, for autocompletion. Any name `hashlib` accepts also works."""
+
+
 @dataclass(frozen=True)
 class Hash:
     """
@@ -222,7 +229,7 @@ class Hash:
         return f"{self.algorithm}:{self.hex}"
 
 
-def hash_string(string: str, algorithm: str = "sha1") -> Hash:
+def hash_string(string: str, algorithm: HashAlgorithm | str = "sha1") -> Hash:
     """
     Flexible hash of a string.
     """
@@ -231,13 +238,10 @@ def hash_string(string: str, algorithm: str = "sha1") -> Hash:
     return Hash(algorithm, hasher.digest())
 
 
-def hash_file(file_path: str | Path, algorithm: str = "sha1") -> Hash:
+def hash_file(file_path: str | Path, algorithm: HashAlgorithm | str = "sha1") -> Hash:
     """
     Hash the content of a file.
     """
-    if algorithm not in hashlib.algorithms_available:
-        raise ValueError(f"Unsupported hash algorithm: {algorithm}")
-
     hasher = hashlib.new(algorithm)
     file_path = Path(file_path)
     with file_path.open("rb") as file:
@@ -284,13 +288,6 @@ def abbrev_list(
         if len(items) > max_items:
             shortened.append(indicator)
         return joiner.join(shortened)
-
-
-abbreviate_str = abbrev_str
-"""Deprecated. Use `abbrev_str()` instead."""
-
-abbreviate_list = abbrev_list
-"""Deprecated. Use `abbrev_list()` instead."""
 
 
 def single_line(text: str) -> str:
@@ -567,6 +564,39 @@ def atomic_output_file(
                 raise FileExistsError(f"Destination is a directory: {quote_if_needed(dest_path)}")
 
         tmp_path.replace(dest_path)
+
+
+def atomic_write_text(
+    dest_path: str | Path,
+    text: str,
+    make_parents: bool = False,
+    backup_suffix: str | None = None,
+    encoding: str = "utf-8",
+) -> None:
+    """
+    Atomically write a string to a file, so a partial or corrupt file never appears
+    at `dest_path`. Convenience wrapper around `atomic_output_file()`.
+    """
+    with atomic_output_file(
+        dest_path, make_parents=make_parents, backup_suffix=backup_suffix
+    ) as tmp_path:
+        tmp_path.write_text(text, encoding=encoding)
+
+
+def atomic_write_bytes(
+    dest_path: str | Path,
+    data: bytes,
+    make_parents: bool = False,
+    backup_suffix: str | None = None,
+) -> None:
+    """
+    Atomically write bytes to a file, so a partial or corrupt file never appears
+    at `dest_path`. Convenience wrapper around `atomic_output_file()`.
+    """
+    with atomic_output_file(
+        dest_path, make_parents=make_parents, backup_suffix=backup_suffix
+    ) as tmp_path:
+        tmp_path.write_bytes(data)
 
 
 @contextmanager

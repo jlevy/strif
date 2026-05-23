@@ -81,6 +81,10 @@ bump = true
 # The source location for the package.
 packages = ["src/strif"]
 
+[tool.hatch.build.targets.sdist]
+# Keep agent/tooling state out of the published source distribution.
+exclude = [".claude", ".tbd", ".github", ".copier-answers.yml", "attic"]
+
 
 # ---- Settings ----
 

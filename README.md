@@ -7,14 +7,16 @@ It is simply a few functions and tricks that have repeatedly shown value in vari
 projects. The goal is not to give a comprehensive suite of utilities but simply to
 complement the standard libraries and fill in a few gaps.
 
-✨ **NEW:** **Version 3.0** is out and has additions and updates for Python 3.10-3.13! ✨
+✨ **NEW:** **Version 3.1** adds `atomic_write_text()`/`atomic_write_bytes()`, exposes
+`__version__`, and supports Python 3.10-3.14. ✨
 
 ## Key Features
 
 - **Atomic file operations** with handling of parent directories and backups.
   This is essential for thread safety and good hygiene so partial or corrupt outputs are
   never present in final file locations, even in case a program crashes.
-  See `atomic_output_file()`, `copyfile_atomic()`.
+  See `atomic_output_file()`, `atomic_write_text()`, `atomic_write_bytes()`,
+  `copyfile_atomic()`.
 
 - **Abbreviate and quote strings**, which is useful for logging a clean way.
   See `abbrev_str()`, `single_line()`, `quote_if_needed()`.
@@ -42,6 +44,27 @@ The libs are all small so see pydoc strings or code for full docs.
 > [prettyfmt](https://github.com/jlevy/prettyfmt), another small library built on strif
 > that has some extra functions for pretty, human-readable outputs for objects, sizes,
 > times and dates, etc.
+
+## Using strif with LLM Agents
+
+Strif is handy for code that generates files, which is increasingly often AI agent code.
+
+- **Atomic writes for streamed or generated output.** If a generation is interrupted or
+  crashes mid-write, you never leave a truncated or corrupt file in its final location.
+  `atomic_write_text("out.md", content)` is a one-liner for the common case.
+
+- **Content hashing for caching and dedup.** Use `hash_file()` or `hash_string()` to key
+  a cache on file contents, or `file_mtime_hash()` for a fast (content-free) cache key.
+
+- **Sortable, readable run ids.** `new_timestamped_uid()` gives ids that sort by creation
+  time, which is convenient for logs and scratch directories.
+
+```python
+from strif import atomic_write_text
+
+# Safe even if the process dies partway through writing:
+atomic_write_text("some-dir/output.md", generated_text, make_parents=True)
+```
 
 ## Installation
 
@@ -178,6 +201,13 @@ pip install strif
   Moves a file to a new location, automatically creating parent directories and
   optionally keeping a backup of the destination if it already exists.
 
+- **`atomic_write_text(dest_path, text, make_parents=False, backup_suffix=None,
+  encoding='utf-8')`** and **`atomic_write_bytes(dest_path, data, make_parents=False,
+  backup_suffix=None)`**
+
+  Convenience wrappers around `atomic_output_file()` for the common case of writing a
+  whole string or bytes value atomically in a single call.
+
 For example, it is generally a good idea to wrap an `open()` call with
 `atomic_output_file()`:
 
@@ -185,6 +215,12 @@ For example, it is generally a good idea to wrap an `open()` call with
 with atomic_output_file("some-dir/my-final-output.txt") as temp_target:
     with open(temp_target, "w") as f:
         f.write("some contents")
+```
+
+Or, for the common whole-value case, just:
+
+```python
+atomic_write_text("some-dir/my-final-output.txt", "some contents")
 ```
 
 And this can (and in most cases should) be used in place of `shutil.copyfile`:
@@ -204,7 +240,7 @@ There are also some handy additional options:
 with atomic_output_file("some-dir/my-final-output.txt",
                         make_parents=True, backup_suffix=".old.{timestamp}") as temp_target:
     with open(temp_target, "w") as f:
-        sf.write("some contents")
+        f.write("some contents")
 ```
 
 This creates parent folders as needed (a major convenience).
@@ -310,6 +346,9 @@ Examples:
 
 ## Multiple String Replacements
 
+`Insertion` and `Replacement` are `NamedTuple`s, so you can use named fields
+(`Insertion(offset, text)`, `Replacement(start, end, text)`) or plain positional tuples.
+
 - **`insert_multiple(text: str, insertions: list[Insertion]) -> str`**
 
   Insert multiple strings into `text` at the given offsets, at once.
@@ -317,7 +356,7 @@ Examples:
 - **`replace_multiple(text: str, replacements: list[Replacement]) -> str`**
 
   Replace multiple substrings in `text` with new strings, simultaneously.
-  The replacements are a list of tuples (start_offset, end_offset, new_string).
+  Each `Replacement` is `(start_offset, end_offset, new_string)`.
 
 ## FAQ
 
