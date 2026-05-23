@@ -9,12 +9,6 @@ complement the standard libraries and fill in a few gaps.
 
 > [!TIP]
 > 
-> Given the rapid rise of supply chain attacks on Python packages, it's worth noting this
-> repository has **ZERO dependencies**. You can even have your agent review its security
-> before you use it.
-
-> [!TIP]
-> 
 > ✨ **NEW:** **Version 3.1** adds `atomic_write_text()`/`atomic_write_bytes()`, exposes
 > `__version__`, and supports Python 3.10-3.14. ✨
 >
@@ -22,6 +16,12 @@ complement the standard libraries and fill in a few gaps.
 > [prettyfmt](https://github.com/jlevy/prettyfmt), another small library built on strif
 > that has some extra functions for pretty, human-readable outputs for objects, sizes,
 > times and dates, etc.
+
+> [!TIP]
+> 
+> Given the rapid rise of supply chain attacks on Python packages, it's worth noting this
+> repository has **ZERO dependencies**. You can even have your agent review its security
+> before you use it.
 
 ## Why Use strif (Especially with Coding Agents)
 
