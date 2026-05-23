@@ -19,7 +19,7 @@ def main():
     errcount += run(["codespell", "--write-changes", *SRC_PATHS, *DOC_PATHS])
     errcount += run(["ruff", "check", "--fix", *SRC_PATHS])
     errcount += run(["ruff", "format", *SRC_PATHS])
-    errcount += run(["basedpyright", *SRC_PATHS])
+    errcount += run(["basedpyright", "--stats", *SRC_PATHS])
 
     rprint()
 
@@ -35,10 +35,13 @@ def main():
 @log_calls(level="warning", show_timing_only=True)
 def run(cmd: list[str]) -> int:
     rprint()
-    rprint(f"[bold green]:arrow_forward: {' '.join(cmd)}[/bold green]")
+    rprint(f"[bold green]>> {' '.join(cmd)}[/bold green]")
     errcount = 0
     try:
         subprocess.run(cmd, text=True, check=True)
+    except KeyboardInterrupt:
+        rprint("[yellow]Keyboard interrupt - Cancelled[/yellow]")
+        errcount = 1
     except subprocess.CalledProcessError as e:
         rprint(f"[bold red]Error: {e}[/bold red]")
         errcount = 1

@@ -6,18 +6,19 @@ This project is set up to use [uv](https://docs.astral.sh/uv/) to manage Python 
 dependencies. First, be sure you
 [have uv installed](https://docs.astral.sh/uv/getting-started/installation/).
 
-Then [fork the jlevy/strif repo](https://github.com/jlevy/strif/fork) (having your own
-fork will make it easier to contribute) and
+Then
+[fork the jlevy/strif repo](https://github.com/jlevy/strif/fork)
+(having your own fork will make it easier to contribute) and
 [clone it](https://docs.github.com/en/repositories/creating-and-managing-repositories/cloning-a-repository).
 
 ## Basic Developer Workflows
 
 The `Makefile` simply offers shortcuts to `uv` commands for developer convenience.
-(For clarity, GitHub Actions don't use the Makefile and just call `uv` directly.)
+(For clarity, GitHub Actions don’t use the Makefile and just call `uv` directly.)
 
 ```shell
 # First, install all dependencies and set up your virtual environment.
-# This simply runs `uv sync --all-extras --dev` to install all packages,
+# This simply runs `uv sync --all-extras` to install all packages,
 # including dev dependencies and optional dependencies.
 make install
 
@@ -76,6 +77,10 @@ extensions:
 - [Based Pyright](https://marketplace.visualstudio.com/items?itemName=detachhead.basedpyright)
   for type checking. Note that this extension works with non-Microsoft VSCode forks like
   Cursor.
+
+## Publishing Releases
+
+See [publishing.md](publishing.md) for instructions on publishing to PyPI.
 
 ## Documentation
 
