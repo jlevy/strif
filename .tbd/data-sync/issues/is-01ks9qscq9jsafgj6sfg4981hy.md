@@ -3,14 +3,16 @@ type: is
 id: is-01ks9qscq9jsafgj6sfg4981hy
 title: Bump softprops/action-gh-release v2.6.2 -> v3.0.0 (Node 20 deprecation)
 kind: chore
-status: open
+status: closed
 priority: 1
-version: 1
+version: 2
 labels: []
 dependencies: []
 parent_id: is-01ks9qpwke3tyatft5y2bzrb58
 created_at: 2026-05-23T06:19:01.736Z
-updated_at: 2026-05-23T06:19:01.736Z
+updated_at: 2026-05-23T06:29:56.887Z
+closed_at: 2026-05-23T06:29:56.887Z
+close_reason: null
 ---
 The v3.0.2 publish run emitted: 'Node.js 20 actions are deprecated ... softprops/action-gh-release@<sha>. Actions will be forced to run with Node.js 24 by default starting June 2nd, 2026.' Our pinned v2.6.2 runs on Node 20. v3.0.0 of the action runs on Node 24.
 

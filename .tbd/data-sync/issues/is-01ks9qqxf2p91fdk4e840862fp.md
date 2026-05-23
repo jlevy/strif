@@ -3,14 +3,16 @@ type: is
 id: is-01ks9qqxf2p91fdk4e840862fp
 title: Add Literal type to hash algorithm parameters
 kind: feature
-status: open
+status: closed
 priority: 3
-version: 1
+version: 2
 labels: []
 dependencies: []
 parent_id: is-01ks9qpwke3tyatft5y2bzrb58
 created_at: 2026-05-23T06:18:13.346Z
-updated_at: 2026-05-23T06:18:13.346Z
+updated_at: 2026-05-23T06:29:55.453Z
+closed_at: 2026-05-23T06:29:55.453Z
+close_reason: null
 ---
 hash_string() and hash_file() take algorithm: str. Narrow to a Literal of common algorithms for better autocomplete and agent correctness, while still allowing arbitrary strings hashlib supports.
 

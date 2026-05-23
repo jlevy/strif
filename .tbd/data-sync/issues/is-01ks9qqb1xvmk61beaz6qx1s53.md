@@ -3,16 +3,18 @@ type: is
 id: is-01ks9qqb1xvmk61beaz6qx1s53
 title: Add atomic_write_text() and atomic_write_bytes() helpers
 kind: feature
-status: open
+status: closed
 priority: 2
-version: 2
+version: 3
 labels: []
 dependencies:
   - type: blocks
     target: is-01ks9qszp2tkz3t34va9506jd7
 parent_id: is-01ks9qpwke3tyatft5y2bzrb58
 created_at: 2026-05-23T06:17:54.492Z
-updated_at: 2026-05-23T06:19:26.344Z
+updated_at: 2026-05-23T06:29:54.739Z
+closed_at: 2026-05-23T06:29:54.738Z
+close_reason: null
 ---
 Add two convenience wrappers around atomic_output_file() so the common 'write a whole string/bytes atomically' case is one call instead of nested with-blocks.
 

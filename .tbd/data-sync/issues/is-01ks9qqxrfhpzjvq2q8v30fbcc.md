@@ -3,14 +3,16 @@ type: is
 id: is-01ks9qqxrfhpzjvq2q8v30fbcc
 title: Delete unreachable abbreviate_str / abbreviate_list aliases
 kind: chore
-status: open
+status: closed
 priority: 3
-version: 1
+version: 2
 labels: []
 dependencies: []
 parent_id: is-01ks9qpwke3tyatft5y2bzrb58
 created_at: 2026-05-23T06:18:13.647Z
-updated_at: 2026-05-23T06:18:13.647Z
+updated_at: 2026-05-23T06:29:55.710Z
+closed_at: 2026-05-23T06:29:55.710Z
+close_reason: null
 ---
 src/strif/strif.py lines ~289-292 define deprecated aliases:
     abbreviate_str = abbrev_str

@@ -3,14 +3,16 @@ type: is
 id: is-01ks9qrphymbwr42npfr0b3esg
 title: Add AtomicVar test suite (incl. concurrency)
 kind: task
-status: open
+status: closed
 priority: 2
-version: 1
+version: 2
 labels: []
 dependencies: []
 parent_id: is-01ks9qpwke3tyatft5y2bzrb58
 created_at: 2026-05-23T06:18:39.038Z
-updated_at: 2026-05-23T06:18:39.038Z
+updated_at: 2026-05-23T06:29:55.941Z
+closed_at: 2026-05-23T06:29:55.941Z
+close_reason: null
 ---
 src/strif/atomic_var.py (AtomicVar) currently has ZERO tests. This is the biggest coverage gap. Add tests/test_atomic_var.py.
 

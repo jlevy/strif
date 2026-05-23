@@ -3,14 +3,16 @@ type: is
 id: is-01ks9qqb9zxybvx9bqyjp1eyc3
 title: Expose __version__ on the strif package
 kind: feature
-status: open
+status: closed
 priority: 2
-version: 1
+version: 2
 labels: []
 dependencies: []
 parent_id: is-01ks9qpwke3tyatft5y2bzrb58
 created_at: 2026-05-23T06:17:54.751Z
-updated_at: 2026-05-23T06:17:54.751Z
+updated_at: 2026-05-23T06:29:54.978Z
+closed_at: 2026-05-23T06:29:54.978Z
+close_reason: null
 ---
 Add a runtime __version__ attribute to the top-level package. Humans and agents routinely reach for strif.__version__; it currently does not exist.
 

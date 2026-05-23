@@ -3,14 +3,16 @@ type: is
 id: is-01ks9qrqa21qrnvvpe91d26yw6
 title: Add atomic_output_file {timestamp} backup test (remaining gap)
 kind: task
-status: open
+status: closed
 priority: 3
-version: 1
+version: 2
 labels: []
 dependencies: []
 parent_id: is-01ks9qpwke3tyatft5y2bzrb58
 created_at: 2026-05-23T06:18:39.810Z
-updated_at: 2026-05-23T06:18:39.810Z
+updated_at: 2026-05-23T06:29:56.636Z
+closed_at: 2026-05-23T06:29:56.636Z
+close_reason: null
 ---
 v3.0.2 added atomic_output_file tests for backup_suffix='.bak' (fixed suffix). The {timestamp} variant — which expands to a unique timestamped suffix allowing infinitely many backups — is still untested.
 

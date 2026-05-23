@@ -3,14 +3,16 @@ type: is
 id: is-01ks9qszp2tkz3t34va9506jd7
 title: "README: lead with atomic ops, add agent-use subsection"
 kind: task
-status: open
+status: closed
 priority: 2
-version: 1
+version: 2
 labels: []
 dependencies: []
 parent_id: is-01ks9qpwke3tyatft5y2bzrb58
 created_at: 2026-05-23T06:19:21.153Z
-updated_at: 2026-05-23T06:19:21.153Z
+updated_at: 2026-05-23T06:29:57.332Z
+closed_at: 2026-05-23T06:29:57.331Z
+close_reason: null
 ---
 Two README improvements identified in the senior review:
 

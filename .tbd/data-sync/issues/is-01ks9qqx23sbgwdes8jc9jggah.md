@@ -3,16 +3,18 @@ type: is
 id: is-01ks9qqx23sbgwdes8jc9jggah
 title: Convert Insertion and Replacement to NamedTuple
 kind: feature
-status: open
+status: closed
 priority: 2
-version: 2
+version: 3
 labels: []
 dependencies:
   - type: blocks
     target: is-01ks9qszp2tkz3t34va9506jd7
 parent_id: is-01ks9qpwke3tyatft5y2bzrb58
 created_at: 2026-05-23T06:18:12.931Z
-updated_at: 2026-05-23T06:19:26.580Z
+updated_at: 2026-05-23T06:29:55.213Z
+closed_at: 2026-05-23T06:29:55.213Z
+close_reason: null
 ---
 In src/strif/string_replace.py, Insertion = tuple[int, str] and Replacement = tuple[int, int, str] are anonymous tuples. Anonymous positional tuples are hard for agents/IDEs to call correctly ((5, 10, 'x') gives no hint which int is start vs end). Convert to typing.NamedTuple with named fields.
 

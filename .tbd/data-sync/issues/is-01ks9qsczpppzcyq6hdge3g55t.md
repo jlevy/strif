@@ -3,14 +3,16 @@ type: is
 id: is-01ks9qsczpppzcyq6hdge3g55t
 title: Bump astral-sh/setup-uv v7 -> v8
 kind: chore
-status: open
+status: closed
 priority: 3
-version: 1
+version: 2
 labels: []
 dependencies: []
 parent_id: is-01ks9qpwke3tyatft5y2bzrb58
 created_at: 2026-05-23T06:19:02.006Z
-updated_at: 2026-05-23T06:19:02.006Z
+updated_at: 2026-05-23T06:29:57.109Z
+closed_at: 2026-05-23T06:29:57.109Z
+close_reason: null
 ---
 setup-uv latest is v8.x; we pin v7.6.0 in ci.yml and publish.yml. Not a security issue, just version drift. v8.0.0 introduced 'immutable releases and secure tags'.
 

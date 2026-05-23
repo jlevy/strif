@@ -3,14 +3,16 @@ type: is
 id: is-01ks9qrq23rf2w7c4v4dchgb2z
 title: Add new_uid length/bits math test
 kind: task
-status: open
+status: closed
 priority: 3
-version: 1
+version: 2
 labels: []
 dependencies: []
 parent_id: is-01ks9qpwke3tyatft5y2bzrb58
 created_at: 2026-05-23T06:18:39.555Z
-updated_at: 2026-05-23T06:18:39.555Z
+updated_at: 2026-05-23T06:29:56.402Z
+closed_at: 2026-05-23T06:29:56.402Z
+close_reason: null
 ---
 new_uid(bits) computes length = int(bits/5.16)+1 over a 36-char alphabet. Untested. Add a small deterministic test.
 
