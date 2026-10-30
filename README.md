@@ -57,6 +57,10 @@ The whole library (all zero-dependency):
 - **Abbreviate and quote strings** for clean logging and display.
   See `abbrev_str()`, `single_line()`, `quote_if_needed()`.
 
+- **Idempotent string and byte conversions**: safely normalize inputs that may be either
+  `str` or `bytes`.
+  See `ensure_str()`, `ensure_bytes()`, `lenb()`.
+
 That's all! They are all quite simple and small, so see the pydoc strings or code for
 full docs.
 
@@ -91,6 +95,18 @@ pip install strif
 
   Returns a string with quotes if needed for proper display (for example, for filenames
   with spaces).
+
+- **`ensure_str(s: str | bytes | bytearray, encoding: str = 'utf-8', errors: str = 'strict') -> str`**
+
+  Idempotently converts bytes or bytearray to string using `encoding`, returning str as-is.
+
+- **`ensure_bytes(s: str | bytes | bytearray, encoding: str = 'utf-8', errors: str = 'strict') -> bytes`**
+
+  Idempotently converts string to bytes using `encoding`, returning bytes as-is.
+
+- **`lenb(s: str, encoding: str = 'utf-8') -> int`**
+
+  Returns the byte length of a string in the specified encoding.
 
 ## String Identifiers, Timestamps, and Hashing
 
