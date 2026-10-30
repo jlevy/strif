@@ -1,6 +1,17 @@
 from pathlib import Path
+from typing import Any, cast
 
-from strif.strif import abbrev_list, abbrev_str, quote_if_needed, single_line
+import pytest
+
+from strif import (
+    abbrev_list,
+    abbrev_str,
+    ensure_bytes,
+    ensure_str,
+    lenb,
+    quote_if_needed,
+    single_line,
+)
 
 
 def test_quote_if_needed():
@@ -38,3 +49,85 @@ def test_single_line():
     assert single_line("hello\nworld") == "hello world"
     assert single_line("  spaces  \t tabs  \n newlines  ") == "spaces tabs newlines"
     assert single_line("\n\n\n") == ""
+
+
+def test_lenb():
+    assert lenb("hello") == 5
+    assert lenb("👋") == 4
+    assert lenb("café", encoding="utf-8") == 5
+    assert lenb("café", encoding="latin-1") == 4
+
+
+def test_ensure_str():
+    # Str inputs
+    assert ensure_str("hello") == "hello"
+    assert ensure_str("") == ""
+    assert ensure_str("café") == "café"
+
+    # Bytes inputs
+    assert ensure_str(b"hello") == "hello"
+    assert ensure_str(b"") == ""
+    assert ensure_str("café".encode()) == "café"
+    assert ensure_str(bytearray(b"hello")) == "hello"
+
+    # Idempotence
+    assert ensure_str(ensure_str(b"hello")) == "hello"
+    assert ensure_str(ensure_str("hello")) == "hello"
+
+    # Alternative encodings
+    assert ensure_str("café".encode("latin-1"), encoding="latin-1") == "café"
+
+    # Errors parameter
+    invalid_utf8 = b"\xff\xfe"
+    with pytest.raises(UnicodeDecodeError):
+        ensure_str(invalid_utf8, errors="strict")
+    assert "\ufffd" in ensure_str(invalid_utf8, errors="replace")
+    assert ensure_str(invalid_utf8, errors="ignore") == ""
+
+    # Reject invalid/empty encoding or error handlers
+    with pytest.raises(LookupError):
+        ensure_str(b"hello", encoding="")
+    with pytest.raises(LookupError):
+        ensure_str(invalid_utf8, errors="")
+
+    # Invalid types
+    with pytest.raises(TypeError, match="Expected str or bytes-like object"):
+        ensure_str(cast(Any, 123))
+    with pytest.raises(TypeError, match="Expected str or bytes-like object"):
+        ensure_str(cast(Any, None))
+
+
+def test_ensure_bytes():
+    # Bytes inputs
+    assert ensure_bytes(b"hello") == b"hello"
+    assert ensure_bytes(b"") == b""
+    assert ensure_bytes(bytearray(b"hello")) == b"hello"
+
+    # Str inputs
+    assert ensure_bytes("hello") == b"hello"
+    assert ensure_bytes("") == b""
+    assert ensure_bytes("café") == "café".encode()
+
+    # Idempotence
+    assert ensure_bytes(ensure_bytes("hello")) == b"hello"
+    assert ensure_bytes(ensure_bytes(b"hello")) == b"hello"
+
+    # Alternative encodings
+    assert ensure_bytes("café", encoding="latin-1") == "café".encode("latin-1")
+
+    # Errors parameter
+    with pytest.raises(UnicodeEncodeError):
+        ensure_bytes("testé ☕", encoding="ascii", errors="strict")
+    assert ensure_bytes("testé ☕", encoding="ascii", errors="ignore") == b"test "
+
+    # Reject invalid/empty encoding or error handlers
+    with pytest.raises(LookupError):
+        ensure_bytes("hello", encoding="")
+    with pytest.raises(LookupError):
+        ensure_bytes("testé ☕", encoding="ascii", errors="")
+
+    # Invalid types
+    with pytest.raises(TypeError, match="Expected str or bytes-like object"):
+        ensure_bytes(cast(Any, 123))
+    with pytest.raises(TypeError, match="Expected str or bytes-like object"):
+        ensure_bytes(cast(Any, None))

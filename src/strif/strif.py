@@ -54,6 +54,8 @@ __all__ = (
     "rmtree_or_file",
     "chmod_native",
     "lenb",
+    "ensure_str",
+    "ensure_bytes",
 )
 
 # A pre-opened handle to /dev/null.
@@ -760,3 +762,37 @@ def lenb(s: str, encoding: str = "utf-8") -> int:
     Convenience for length of a string in bytes.
     """
     return len(s.encode(encoding))
+
+
+def ensure_str(
+    s: str | bytes | bytearray,
+    encoding: str = "utf-8",
+    errors: str = "strict",
+) -> str:
+    """
+    Ensure the input is a str. Decodes bytes or bytearray using the specified encoding;
+    returns str as-is. Raises TypeError for other types.
+    """
+    if isinstance(s, str):
+        return s
+    if isinstance(s, (bytes, bytearray)):  # pyright: ignore[reportUnnecessaryIsInstance]
+        return s.decode(encoding, errors)
+    raise TypeError(f"Expected str or bytes-like object, got {type(s).__name__}")
+
+
+def ensure_bytes(
+    s: str | bytes | bytearray,
+    encoding: str = "utf-8",
+    errors: str = "strict",
+) -> bytes:
+    """
+    Ensure the input is bytes. Encodes str using the specified encoding;
+    converts bytearray to bytes, and returns bytes as-is. Raises TypeError for other types.
+    """
+    if isinstance(s, bytes):
+        return s
+    if isinstance(s, bytearray):
+        return bytes(s)
+    if isinstance(s, str):  # pyright: ignore[reportUnnecessaryIsInstance]
+        return s.encode(encoding, errors)
+    raise TypeError(f"Expected str or bytes-like object, got {type(s).__name__}")

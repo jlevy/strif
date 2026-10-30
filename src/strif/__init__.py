@@ -38,6 +38,8 @@ __all__ = (  # noqa: F405
     "rmtree_or_file",
     "chmod_native",
     "lenb",
+    "ensure_str",
+    "ensure_bytes",
     # string_replace.py
     "Insertion",
     "Replacement",
